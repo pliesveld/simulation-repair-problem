@@ -1,0 +1,77 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://core/machine.tscn" type="PackedScene" id=1]
+[ext_resource path="res://core/machine.gd" type="Script" id=2]
+
+[node name="Control" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="Panel" type="Panel" parent="."]
+margin_left = 1.0
+margin_top = 1.0
+margin_right = 91.0
+margin_bottom = 197.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="PanelContainer" type="PanelContainer" parent="Panel"]
+margin_right = 90.0
+margin_bottom = 196.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/PanelContainer"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 83.0
+margin_bottom = 189.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="machine" parent="Panel/PanelContainer/VBoxContainer" instance=ExtResource( 1 )]
+position = Vector2( 37.9487, 137.066 )
+scale = Vector2( 0.5, 0.5 )
+script = ExtResource( 2 )
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/PanelContainer/VBoxContainer"]
+margin_right = 76.0
+margin_bottom = 92.0
+__meta__ = {
+"_edit_lock_": true
+}
+
+[node name="BreakButton" type="Button" parent="Panel/PanelContainer/VBoxContainer/VBoxContainer"]
+margin_right = 76.0
+margin_bottom = 20.0
+text = "break"
+
+[node name="RepairButton" type="Button" parent="Panel/PanelContainer/VBoxContainer/VBoxContainer"]
+margin_top = 24.0
+margin_right = 76.0
+margin_bottom = 44.0
+text = "repair"
+
+[node name="ReplaceButton" type="Button" parent="Panel/PanelContainer/VBoxContainer/VBoxContainer"]
+margin_top = 48.0
+margin_right = 76.0
+margin_bottom = 68.0
+text = "replace"
+
+[node name="DebugButton" type="Button" parent="Panel/PanelContainer/VBoxContainer/VBoxContainer"]
+margin_top = 72.0
+margin_right = 76.0
+margin_bottom = 92.0
+text = "debug"
+[connection signal="pressed" from="Panel/PanelContainer/VBoxContainer/VBoxContainer/BreakButton" to="Panel/PanelContainer/VBoxContainer/machine" method="_on_BreakButton_pressed"]
+[connection signal="pressed" from="Panel/PanelContainer/VBoxContainer/VBoxContainer/RepairButton" to="Panel/PanelContainer/VBoxContainer/machine" method="_on_RepairButton_pressed"]
+[connection signal="pressed" from="Panel/PanelContainer/VBoxContainer/VBoxContainer/ReplaceButton" to="Panel/PanelContainer/VBoxContainer/machine" method="_on_ReplaceButton_pressed"]
+[connection signal="pressed" from="Panel/PanelContainer/VBoxContainer/VBoxContainer/DebugButton" to="Panel/PanelContainer/VBoxContainer/machine" method="_on_DebugButton_pressed"]

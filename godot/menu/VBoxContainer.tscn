@@ -1,0 +1,106 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://menu/SliderValue.tscn" type="PackedScene" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Button
+
+onready var N = get_node('../GridContainer/SliderContainerN/')
+onready var S = get_node('../GridContainer/SliderContainerS/')
+onready var G = get_node('../GridContainer/SliderContainerG/')
+onready var H = get_node('../GridContainer/SliderContainerH/')
+onready var K = get_node('../GridContainer/SliderContainerK/')
+
+func _ready():
+	N.get_node('./Label').text = 'N'
+	S.get_node('./Label').text = 'S'
+	G.get_node('./Label').text = 'G'
+	H.get_node('./Label').text = 'H'
+	K.get_node('./Label').text = 'K'
+
+	N.get_node('./hcontainer/LineEdit').min_value = 1
+	N.get_node('./hcontainer/LineEdit').max_value = 16
+	S.get_node('./hcontainer/LineEdit').min_value = 1
+	S.get_node('./hcontainer/LineEdit').max_value = 32
+	G.get_node('./hcontainer/LineEdit').max_value = 10
+	H.get_node('./hcontainer/LineEdit').max_value = 10
+	K.get_node('./hcontainer/LineEdit').max_value = 50000
+
+func _on_MenuButton_pressed():
+	print(\"button pressed.\")
+	print(\"N: \", N.value)
+	print(\"S: \", S.value)
+	print(\"G: \", G.value)
+	print(\"H: \", H.value)
+	print(\"K: \", K.value)
+	"
+
+[node name="VBoxContainer" type="VBoxContainer"]
+margin_left = 300.51
+margin_top = 167.659
+margin_right = 699.51
+margin_bottom = 600.659
+
+[node name="Panel" type="Panel" parent="."]
+margin_right = 399.0
+margin_bottom = 433.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MenuButton" type="Button" parent="Panel"]
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+margin_left = -199.5
+margin_top = -60.0
+margin_right = 199.5
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text = "begin simulation"
+script = SubResource( 1 )
+
+[node name="GridContainer" type="GridContainer" parent="Panel"]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 390.0
+margin_bottom = 333.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/vseparation = 5
+custom_constants/hseparation = 3
+columns = 2
+
+[node name="SliderContainerN" parent="Panel/GridContainer" instance=ExtResource( 1 )]
+margin_top = 0.0
+margin_right = 188.0
+margin_bottom = 51.0
+dragger_visibility = 1
+
+[node name="SliderContainerS" parent="Panel/GridContainer" instance=ExtResource( 1 )]
+margin_left = 191.0
+margin_top = 0.0
+margin_right = 379.0
+margin_bottom = 51.0
+dragger_visibility = 1
+
+[node name="SliderContainerG" parent="Panel/GridContainer" instance=ExtResource( 1 )]
+margin_top = 56.0
+margin_right = 188.0
+margin_bottom = 107.0
+dragger_visibility = 1
+
+[node name="SliderContainerH" parent="Panel/GridContainer" instance=ExtResource( 1 )]
+margin_left = 191.0
+margin_top = 56.0
+margin_right = 379.0
+margin_bottom = 107.0
+dragger_visibility = 1
+
+[node name="SliderContainerK" parent="Panel/GridContainer" instance=ExtResource( 1 )]
+margin_top = 112.0
+margin_right = 188.0
+margin_bottom = 163.0
+size_flags_stretch_ratio = 21.4
+dragger_visibility = 1
+[connection signal="pressed" from="Panel/MenuButton" to="Panel/MenuButton" method="_on_MenuButton_pressed"]
