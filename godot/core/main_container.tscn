@@ -10,14 +10,14 @@ anchor_bottom = 1.0
 margin_right = 40.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
-margin_right = 1024.0
+margin_right = 1200.0
 margin_bottom = 600.0
 
 [node name="Control" parent="HBoxContainer" instance=ExtResource( 1 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_top = 0.0
-margin_right = 338.0
+margin_right = 397.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -25,9 +25,9 @@ size_flags_vertical = 3
 [node name="Control2" parent="HBoxContainer" instance=ExtResource( 2 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 342.0
+margin_left = 401.0
 margin_top = 0.0
-margin_right = 680.0
+margin_right = 798.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -35,9 +35,9 @@ size_flags_vertical = 3
 [node name="Control3" parent="HBoxContainer" instance=ExtResource( 3 )]
 anchor_right = 0.0
 anchor_bottom = 0.0
-margin_left = 684.0
+margin_left = 802.0
 margin_top = 0.0
-margin_right = 1024.0
+margin_right = 1200.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3

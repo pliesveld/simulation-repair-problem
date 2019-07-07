@@ -6,11 +6,19 @@ onready var scene = preload("res://core/machine_working.tscn")
 onready var n = 10
 
 func _update_machines():
+	var repair = $PanelContainer/VSplitContainer/Panel/CenterContainer
+	
+	if n > 0:
+		var new_machine = scene.instance()
+		var new_machine_animcation = new_machine.get_node("AnimatedSprite")
+		new_machine_animcation.animation = "repairing"
+		repair.add_child(new_machine)
+
 	var grid = get_node("PanelContainer/VSplitContainer/GridContainer")
 	for child in grid.get_children():
 		grid.remove_child(child)
 
-	for i in range(0, n):
+	for i in range(1, n):
 		var new_machine = scene.instance()
 		var new_machine_animcation = new_machine.get_node("AnimatedSprite")
 		new_machine_animcation.animation = "broken"
