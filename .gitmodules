@@ -1,0 +1,3 @@
+[submodule "godot/addons/godot-event-bus"]
+	path = godot/addons/godot-event-bus
+	url = https://github.com/Naata/godot-event-bus

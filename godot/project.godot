@@ -20,10 +20,18 @@ run/main_scene="res://core/main_container.tscn"
 boot_splash/fullsize=false
 config/icon="res://icon.png"
 
+[autoload]
+
+event_bus="*res://addons/godot-event-bus/plugin/event_bus.gd"
+
 [display]
 
 window/size/width=1920
 window/size/height=1080
+
+[editor_plugins]
+
+enabled=PoolStringArray( "godot-event-bus" )
 
 [rendering]
 
