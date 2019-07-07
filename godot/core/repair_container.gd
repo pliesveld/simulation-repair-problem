@@ -25,11 +25,24 @@ func _update_machines():
 		get_node("PanelContainer/VSplitContainer/GridContainer").add_child(new_machine)
 
 func _ready():
+	event_bus.subscribe("init_event", self, "_handle_init_event")
+	event_bus.subscribe("crash_event", self, "_handle_crash_event")
+	event_bus.subscribe("failure_event", self, "_handle_failure_event")	
+	event_bus.subscribe("repair_event", self, "_handle_repair_event")	
+	
+func _handle_init_event(data):
+	n = 0
 	_update_machines()
-	connect("my_signal", self, "signal_handler")
-	emit_signal("my_signal", 4)
+	
+func _handle_failure_event(data):
+	n = n + 1
+	_update_machines()
 
-func signal_handler(count):
-	print("repair_container::signal_handler", count)
-	n = count
-	_update_machines()
+func _handle_repair_event(data):
+	if n > 0:
+		n = n - 1
+		_update_machines()
+
+func _handle_crash_event(data):
+	n = n - 1
+	_update_machines()	
