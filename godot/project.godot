@@ -16,8 +16,14 @@ _global_script_class_icons={
 [application]
 
 config/name="New Game Project"
-run/main_scene="res://menu/VBoxContainer.tscn"
+run/main_scene="res://core/main_container.tscn"
+boot_splash/fullsize=false
 config/icon="res://icon.png"
+
+[display]
+
+window/size/width=1920
+window/size/height=1080
 
 [rendering]
 
