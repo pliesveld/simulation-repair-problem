@@ -6,17 +6,20 @@
 
 namespace godot {
 
-class GDExample : public Sprite {
-    GODOT_CLASS(GDExample, Sprite)
+class ExampleSprite : public Sprite {
+    GODOT_CLASS(ExampleSprite, Sprite)
 
 private:
     float time_passed;
+    float amplitude;
 
 public:
     static void _register_methods();
 
-    GDExample();
-    ~GDExample();
+    ExampleSprite();
+    virtual ~ExampleSprite();
+
+    void _enter_tree();
 
     void _init(); // our initializer called by Godot
 
