@@ -14,7 +14,8 @@ var thresh = 3
 
 func _do_stuff(line):
 	print('adding ' + line)
-	add_text(line)
+	append_bbcode(line)
+#	add_text(line)
 	newline()
 	_do_buffer_updates()
 
