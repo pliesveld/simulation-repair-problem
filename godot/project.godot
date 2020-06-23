@@ -23,6 +23,7 @@ config/icon="res://icon.png"
 [autoload]
 
 event_bus="*res://addons/godot-event-bus/plugin/event_bus.gd"
+global="*res://scripts/global.gd"
 
 [display]
 
@@ -32,6 +33,10 @@ window/size/height=1080
 [editor_plugins]
 
 enabled=PoolStringArray( "godot-event-bus" )
+
+[gdnative]
+
+singletons=[  ]
 
 [rendering]
 

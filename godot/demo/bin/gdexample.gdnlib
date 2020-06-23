@@ -1,20 +1,18 @@
 [general]
 
 singleton=false
-load_once=true
+load_once=false
 symbol_prefix="godot_"
 reloadable=false
 
 [entry]
 
-X11.64="res://demo/bin/x11/libgdexample.so"
-Server.64="res://demo/bin/x11/libgdexample.so"
-Windows.64="res://demo/bin/win64/libgdexample.dll"
 OSX.64="res://demo/bin/osx/libgdexample.dylib"
+Windows.64="res://demo/bin/win64/libgdexample.dll"
+X11.64="res://demo/bin/x11/libgdexample.so"
 
 [dependencies]
 
-X11.64=[]
-Windows.64=[]
-OSX.64=[]
-
+OSX.64=[  ]
+Windows.64=[  ]
+X11.64=[  ]
