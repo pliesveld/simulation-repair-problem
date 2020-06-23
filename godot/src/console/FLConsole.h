@@ -29,6 +29,14 @@
 #include <deque>
 #include <string>
 
+#include <core/Godot.hpp>
+
+
+#include <gen/OS.hpp> // scancode
+
+#include <gen/GlobalConstants.hpp> // for keylist enums
+//https://docs.godotengine.org/en/stable/classes/class_@globalscope.html#enum-globalscope-keylist
+
 #define CVAR_DEL_KEY 127
 #define FLCONSOLE_KEY 96
 
@@ -40,7 +48,7 @@
 
 #include <core/Godot.hpp>
 
-// TODO: remove references to
+// TODO: forward declarations added to avoid compile errors. remove references and forward declarations
 struct Fl_Widget;
 struct GLWindow;
 
@@ -389,10 +397,10 @@ inline void FLConsole::draw()
 }
 
 
-#include <cvars/CVar.h>
-#include <CVars/TrieNode.h>
+#include "CVar.h"
+#include "TrieNode.h"
 
-#include <FLConsole/FLConsoleFunction.h>
+#include "FLConsoleFunction.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Constructor.
@@ -466,13 +474,13 @@ inline void FLConsoleInstance::Init()
 //    glGetIntegerv( GL_VIEWPORT, &m_Viewport.x );
 
     // add basic functions to the console
-    CVarUtils::CreateCVar( "console.version", ConsoleVersion, "The current version of FLConsole" );
-    CVarUtils::CreateCVar( "help", ConsoleHelp, "Gives help information about the console or more specifically about a CVar." );
-    CVarUtils::CreateCVar( "find", ConsoleFind, "find 'name' will return the list of CVars containing 'name' as a substring." );
-    CVarUtils::CreateCVar( "exit", ConsoleExit, "Close the application" );
-    CVarUtils::CreateCVar( "quit", ConsoleExit, "Close the application" );
-    CVarUtils::CreateCVar( "save", ConsoleSave, "Save the CVars to a file" );
-    CVarUtils::CreateCVar( "load", ConsoleLoad, "Load CVars from a file" );
+    CVarUtils::CreateCVar( "CONSOLE.VERSION", ConsoleVersion, "The current version of FLConsole" );
+    CVarUtils::CreateCVar( "HELP", ConsoleHelp, "Gives help information about the console or more specifically about a CVar." );
+    CVarUtils::CreateCVar( "FIND", ConsoleFind, "find 'name' will return the list of CVars containing 'name' as a substring." );
+    CVarUtils::CreateCVar( "EXIT", ConsoleExit, "Close the application" );
+    CVarUtils::CreateCVar( "QUIT", ConsoleExit, "Close the application" );
+    CVarUtils::CreateCVar( "SAVE", ConsoleSave, "Save the CVars to a file" );
+    CVarUtils::CreateCVar( "LOAD", ConsoleLoad, "Load CVars from a file" );
 
     CVarUtils::CreateCVar( "console.history.load", ConsoleHistoryLoad, "Load console history from a file" );
     CVarUtils::CreateCVar( "console.history.save", ConsoleHistorySave, "Save the console history to a file" );
@@ -524,7 +532,7 @@ inline void FLConsoleInstance::_CheckInit()
 inline void FLConsoleInstance::glPrintf(int x, int y, const std::string& sMsg, ... )
 {
 //    glPrintf( x, y, sMsg.c_str() );
-
+	godot::Godot::print(sMsg.c_str()); // TODO: print to window
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1266,7 +1274,118 @@ inline int FLConsoleInstance::handle( int e )
 {
     _CheckInit();
 
-    // TODO: handle
+//    if( e != FL_KEYDOWN && e != FL_KEYUP ){ // only handle presses
+//        return 0;
+//    }
+//    if( e == FL_KEYUP ){ // only really care about key down.
+//        return 1;
+//    }
+//
+//    if( !IsOpen() ){
+//        if( Fl::event_key() == '`' ){
+//            OpenConsole();
+//            return 1;
+//        }
+//        else{
+//            return 0;
+//        }
+//    }
+//    if( IsOpen() && Fl::event_key() == '`' ){
+//        CloseConsole();
+//        return 1;
+//    }
+//
+    int key = e;
+//    const char *sInput = Fl::event_text();
+//    const char *sInput = godot::OS;
+
+
+//// not working
+//    godot::String godotstr = godot::OS::get_singleton()->get_scancode_string(e);
+//    godot::Godot::print(godotstr);
+//	std::wstring ws = godotstr.c_str();
+//	std::string s( ws.begin(), ws.end() );
+//	const char* sInput = s.c_str();
+
+    godot::String godotstr = godot::OS::get_singleton()->get_scancode_string(e);
+    godot::Godot::print(godotstr);
+	const char* sInput = godotstr.utf8().get_data(); // Might be dangling pointer?
+
+    switch( key ) {
+//        case KEY_LEFT:
+//            CursorLeft();
+//            break;
+//        case KEY_RIGHT:
+//            CursorRight();
+//            break;
+//        case KEY_PAGEUP:
+//            ScrollUpPage();
+//            break;
+//        case KEY_PAGEDOWN:
+//            ScrollDownPage();
+//            break;
+//        case KEY_UP:
+//            if( Fl::event_state( FL_SHIFT ) ){
+//                ScrollUpLine();
+//            }
+//            else{
+//                HistoryBack();
+//            }
+//            break;
+//        case KEY_DOWN:
+//            if( Fl::event_state( FL_SHIFT ) ){
+//                ScrollDownLine();
+//            }
+//            else{
+//                HistoryForward();
+//            }
+//            break;
+//        case KEY_HOME:
+//            CursorToBeginningOfLine();
+//            break;
+//        case KEY_END:
+//            CursorToEndOfLine();
+//            break;
+//        case KEY_TAB:
+//            _TabComplete();
+//            break;
+    	case godot::GlobalConstants::KEY_ENTER:
+            _ProcessCurrentCommand();
+            m_sCurrentCommandBeg = "";
+            m_sCurrentCommandEnd = "";
+            m_nCommandNum = 0; //reset history
+            m_nScrollPixels = 0; //reset scrolling
+            break;
+//        case KEY_BACKSPACE:
+//            if( m_sCurrentCommandBeg.size() > 0 ) {
+//                m_sCurrentCommandBeg
+//                    = m_sCurrentCommandBeg.substr(0, m_sCurrentCommandBeg.size() - 1);
+//            }
+//            break;
+//        case KEY_DELETE:
+//        case CVAR_DEL_KEY: // delete
+//            if( m_sCurrentCommandEnd.size() > 0 ) {
+//                m_sCurrentCommandEnd
+//                    = m_sCurrentCommandEnd.substr(1, m_sCurrentCommandEnd.size() );
+//            }
+//            break;
+        default:
+//            if( Fl::event_length() == 1 && std::isprint(*sInput) ){
+            if( std::isprint(*sInput) ){
+                m_sCurrentCommandBeg += *sInput; // just add the key to the string
+                m_nCommandNum = 0; //reset history
+                m_nScrollPixels = 0; //reset scrolling
+            }
+            else{
+//                printf("WARNING: event_text()='%s', length = %d, val %d\n",
+//                        sInput, Fl::event_length(), key );
+            }
+    }
+
+
+
+
+    // TODO: following is old handler, kept for reference. remove old handle
 
 //
 //    if( e != FL_KEYDOWN && e != FL_KEYUP ){ // only handle presses

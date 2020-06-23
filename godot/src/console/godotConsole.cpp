@@ -18,7 +18,16 @@ void GodotConsole::_ready() {
 	printf("_ready\n");
 }
 
-void GodotConsole::ProcessCommand(godot::Variant cmd) {
-	Godot::print("Command: {0}", cmd);
 
+
+void GodotConsole::ProcessKey(int key) {
+	Godot::print("ProcessKey: {0}", key);
+
+
+	m_Console.handle(key);
+
+}
+
+void GodotConsole::ProcessCommand(godot::Variant cmd) {
+	Godot::print("ProcessCommand: {0}", cmd);
 }

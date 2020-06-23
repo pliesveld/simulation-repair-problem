@@ -16,6 +16,7 @@ func _ready():
 
 func _input(event):
 	if event is InputEventKey and event.pressed:
+		global.simulation.ProcessKey(event.scancode)
 		if event.scancode == KEY_QUOTELEFT:
 			visible = not visible
 			global.simulation._ready()
