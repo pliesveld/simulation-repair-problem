@@ -33,9 +33,14 @@
 
 
 #include <gen/OS.hpp> // scancode
-
 #include <gen/GlobalConstants.hpp> // for keylist enums
 //https://docs.godotengine.org/en/stable/classes/class_@globalscope.html#enum-globalscope-keylist
+
+
+// how to make godotconsolelogline a singleton and have FLConsole a private member?
+//struct FLConsole;
+//#include "GodotConsoleLogLine.h"
+
 
 #define CVAR_DEL_KEY 127
 #define FLCONSOLE_KEY 96
@@ -139,11 +144,17 @@ class FLConsoleInstance
 
         /// Handle Fltk events, e.g. Add a character to the command line.
         int            handle( int e );
+        int            handle2( const char * );
 
         /// Fltk draw.
         void draw();
 
-    private:
+		std::string _TabComplete();
+		void SetCurrentCommand(const char *);
+
+
+
+private:
 
         // printf style function take position to print to as well
         // NB: coordinates start from bottom left
@@ -181,7 +192,7 @@ class FLConsoleInstance
         /// Height of the console in pixels (even if it is currently animating).
         int           _GetConsoleHeight();
         void          _RenderText();
-        void          _TabComplete();
+//        void          _TabComplete();
         bool          _ProcessCurrentCommand( bool bExecute = true );
         bool          _ExecuteFunction( CVarUtils::CVar<ConsoleFunc> * cvar, bool bExecute );
         bool          _IsCursorOn();
@@ -344,10 +355,16 @@ class FLConsole
     public:
         FLConsole();
         Fl_Widget*  parent();
-        int         handle( int e );
+        int
+        handle( int e );
+        int
+        handle2( const char * );
         void        draw();
 
-        // wrapper 
+        std::string TabComplete();
+        void SetCurrentCommand( const char * );
+
+        // wrapper
         bool        IsOpen()
         { 
             return m_pFLConsoleInstance->IsOpen(); 
@@ -357,6 +374,7 @@ class FLConsole
         {
           m_pFLConsoleInstance->OpenConsole();
         }
+
 
     private:
         FLConsoleInstance*  m_pFLConsoleInstance; 
@@ -389,12 +407,30 @@ inline int FLConsole::handle( int e )
     return m_pFLConsoleInstance->handle(e);
 }
 
+
+inline int FLConsole::handle2( const char * cmd)
+{
+	return m_pFLConsoleInstance->handle2(cmd);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Fltk draw function.
 inline void FLConsole::draw()
 {
     m_pFLConsoleInstance->draw();
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Fltk draw function.
+inline std::string FLConsole::TabComplete()
+{
+	return m_pFLConsoleInstance->_TabComplete();
+}
+
+inline void FLConsole::SetCurrentCommand( const char * cmd) {
+	return m_pFLConsoleInstance->SetCurrentCommand(cmd);
+}
+
 
 
 #include "CVar.h"
@@ -474,13 +510,13 @@ inline void FLConsoleInstance::Init()
 //    glGetIntegerv( GL_VIEWPORT, &m_Viewport.x );
 
     // add basic functions to the console
-    CVarUtils::CreateCVar( "CONSOLE.VERSION", ConsoleVersion, "The current version of FLConsole" );
-    CVarUtils::CreateCVar( "HELP", ConsoleHelp, "Gives help information about the console or more specifically about a CVar." );
-    CVarUtils::CreateCVar( "FIND", ConsoleFind, "find 'name' will return the list of CVars containing 'name' as a substring." );
-    CVarUtils::CreateCVar( "EXIT", ConsoleExit, "Close the application" );
-    CVarUtils::CreateCVar( "QUIT", ConsoleExit, "Close the application" );
-    CVarUtils::CreateCVar( "SAVE", ConsoleSave, "Save the CVars to a file" );
-    CVarUtils::CreateCVar( "LOAD", ConsoleLoad, "Load CVars from a file" );
+    CVarUtils::CreateCVar( "console.version", ConsoleVersion, "The current version of FLConsole" );
+    CVarUtils::CreateCVar( "help", ConsoleHelp, "Gives help information about the console or more specifically about a CVar." );
+    CVarUtils::CreateCVar( "find", ConsoleFind, "find 'name' will return the list of CVars containing 'name' as a substring." );
+    CVarUtils::CreateCVar( "exit", ConsoleExit, "Close the application" );
+    CVarUtils::CreateCVar( "quit", ConsoleExit, "Close the application" );
+    CVarUtils::CreateCVar( "save", ConsoleSave, "Save the CVars to a file" );
+    CVarUtils::CreateCVar( "load", ConsoleLoad, "Load CVars from a file" );
 
     CVarUtils::CreateCVar( "console.history.load", ConsoleHistoryLoad, "Load console history from a file" );
     CVarUtils::CreateCVar( "console.history.save", ConsoleHistorySave, "Save the console history to a file" );
@@ -569,6 +605,7 @@ inline void FLConsoleInstance::glPrintf(int x, int y, const char* sMsg, ... )
 
 
     godot::Godot::print(pBuffer);
+//    godot::GodotConsoleLogLine::get_singleton();
 
     delete[] pBuffer;
 }
@@ -1268,7 +1305,22 @@ inline void FLConsoleInstance::ScrollDownPage()
     ScrollDown( (int)( (m_Viewport.height*m_fOverlayPercent) - 5*m_nCharHeight ) ); 
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+inline int FLConsoleInstance::handle2( const char * sInput ) {
+
+//	_CheckInit();
+//	const char* sInput = godotstr.utf8().get_data();
+	m_sCurrentCommandBeg = "";
+	m_sCurrentCommandBeg = std::string(sInput);
+	_ProcessCurrentCommand();
+	m_sCurrentCommandBeg = "";
+	m_sCurrentCommandEnd = "";
+	m_nCommandNum = 0; //reset history
+	m_nScrollPixels = 0; //reset scrolling
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////`////////////////////////////////////
 /// Process key presses.
 inline int FLConsoleInstance::handle( int e )
 {
@@ -1497,22 +1549,29 @@ inline void FLConsoleInstance::ClearCurrentCommand()
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Add a line to the history log.
-inline void FLConsoleInstance::EnterLogLine(const char *line, const LineProperty prop, bool display)
+inline void FLConsoleInstance::SetCurrentCommand(const char *cmd)
 {
-    _CheckInit();
-    if( (int)m_sConsoleText.size() >= m_nConsoleMaxHistory ) {
-        m_sConsoleText.pop_back();
-    }
-
-    if( line != NULL ) {
-        m_sConsoleText.push_front( ConsoleLine(std::string(line), prop, display) );
-
-        if( m_bSavingScript && prop != LINEPROP_ERROR ) {
-            m_ScriptText.push_front( ConsoleLine(std::string(line), prop, display) );
-        }
-    }
+	m_sCurrentCommandBeg = std::string(cmd);
+	m_sCurrentCommandEnd = "";
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/// Add a line to the history log.
+//inline void FLConsoleInstance::EnterLogLine(const char *line, const LineProperty prop, bool display)
+//{
+//    _CheckInit();
+//    if( (int)m_sConsoleText.size() >= m_nConsoleMaxHistory ) {
+//        m_sConsoleText.pop_back();
+//    }
+//
+//    if( line != NULL ) {
+//        m_sConsoleText.push_front( ConsoleLine(std::string(line), prop, display) );
+//
+//        if( m_bSavingScript && prop != LINEPROP_ERROR ) {
+//            m_ScriptText.push_front( ConsoleLine(std::string(line), prop, display) );
+//        }
+//    }
+//}
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Retreives command in history, if m_nCommandNum is invalid then
@@ -1642,12 +1701,12 @@ void FLConsoleInstance::PrintAllCVars()
 */
 
 ////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::_TabComplete()
+inline std::string FLConsoleInstance::_TabComplete()
 {
     Trie& trie = CVarUtils::TrieInstance();
     TrieNode* node = trie.FindSubStr(  RemoveSpaces( m_sCurrentCommandBeg ) );
     if( !node ) {
-        return;
+        return "";
     }
     else if( node->m_nNodeType == TRIE_LEAF || (node->m_children.size() == 0) ) {
         node = trie.Find(m_sCurrentCommandBeg);
@@ -1659,7 +1718,7 @@ inline void FLConsoleInstance::_TabComplete()
         std::vector<TrieNode*> suggest = trie.CollectAllNodes(node);
         //output suggestions
         if( suggest.size() > 1) {
-            std::vector<std::pair<std::string,int> > suggest_name_index_full;            
+            std::vector<std::pair<std::string,int> > suggest_name_index_full;
             std::vector<std::pair<std::string,int> > suggest_name_index_set;
             // Build list of names with index from suggest
             // Find lowest recursion level
@@ -1769,6 +1828,8 @@ inline void FLConsoleInstance::_TabComplete()
             m_sCurrentCommandBeg = ((CVarUtils::CVar<int>*) suggest[0]->m_pNodeData)->m_sVarName;
         }
     }
+
+	return m_sCurrentCommandBeg;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -2,7 +2,7 @@
 
 [ext_resource path="res://console/ConsoleNode.gd" type="Script" id=1]
 [ext_resource path="res://console/ConsolePanel.gd" type="Script" id=2]
-[ext_resource path="res://console/RichTextLabel.gd" type="Script" id=3]
+[ext_resource path="res://demo/bin/gdConsoleLogline.gdns" type="Script" id=3]
 
 [node name="ConsoleNode" type="Node2D"]
 script = ExtResource( 1 )
@@ -22,9 +22,9 @@ script = ExtResource( 2 )
 
 [node name="ConsoleRichTextLabel" type="RichTextLabel" parent="ConsoleContainer/ConsolePanel"]
 margin_left = 10.0
-margin_top = 8.0
+margin_top = 10.0
 margin_right = 1013.0
-margin_bottom = 366.0
+margin_bottom = 368.0
 size_flags_horizontal = 11
 size_flags_vertical = 11
 bbcode_enabled = true
@@ -38,6 +38,7 @@ is
 a
 test
 "
+scroll_following = true
 script = ExtResource( 3 )
 
 [node name="ConsoleLineEdit" type="LineEdit" parent="ConsoleContainer"]
@@ -47,4 +48,4 @@ margin_bottom = 400.0
 size_flags_horizontal = 11
 size_flags_vertical = 9
 [connection signal="visibility_changed" from="ConsoleContainer/ConsolePanel" to="ConsoleContainer/ConsolePanel" method="_on_Panel_visibility_changed"]
-[connection signal="text_entered" from="ConsoleContainer/ConsoleLineEdit" to="ConsoleContainer/ConsolePanel/ConsoleRichTextLabel" method="_on_ConsoleLineEdit_text_entered"]
+[connection signal="text_entered" from="ConsoleContainer/ConsoleLineEdit" to="ConsoleContainer/ConsolePanel/ConsoleRichTextLabel" method="_command"]

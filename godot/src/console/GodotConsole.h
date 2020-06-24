@@ -3,7 +3,7 @@
 
 #include <core/Godot.hpp>
 #include <Reference.hpp>
-#include "FLConsole.h"
+//#include "FLConsole.h"
 
 using namespace godot;
 
@@ -11,7 +11,7 @@ class GodotConsole : public godot::Reference {
 	GODOT_CLASS(GodotConsole, godot::Reference
 	);
 
-	FLConsole m_Console;
+//	FLConsole m_Console;
 
 public:
 	GodotConsole();

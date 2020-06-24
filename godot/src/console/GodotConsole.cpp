@@ -1,16 +1,16 @@
 
-#include "godotConsole.h"
+#include "GodotConsole.h"
 #include <core/Godot.hpp>
 
 using namespace godot;
 
 GodotConsole::GodotConsole() {
-
 }
 
 void GodotConsole::_init() {
 	godot::Godot::print("GodotConsole::_init() -- edit\n");
 	printf("_init\n");
+
 }
 
 void GodotConsole::_ready() {
@@ -18,14 +18,9 @@ void GodotConsole::_ready() {
 	printf("_ready\n");
 }
 
-
-
 void GodotConsole::ProcessKey(int key) {
 	Godot::print("ProcessKey: {0}", key);
-
-
-	m_Console.handle(key);
-
+//	m_Console.handle(key);
 }
 
 void GodotConsole::ProcessCommand(godot::Variant cmd) {
