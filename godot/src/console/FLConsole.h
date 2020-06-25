@@ -10,18 +10,10 @@
 #define __FLCONSOLE_H__
 
 #include "CVar.h"
-#include "Timestamp.h"
 
 #include <limits.h>
 #include <stdio.h>
 #include <stdarg.h>
-
-
-//#include <FL/gl_draw.H>
-//#include <FL/Fl.H>
-//#include <FL/Fl_Window.H>
-//#include <FL/Fl_Gl_Window.H>
-//#include <FL/gl.h>
 
 #include <algorithm>
 #include <cstring>
@@ -31,12 +23,6 @@
 
 #include <core/Godot.hpp>
 
-
-#include <gen/OS.hpp> // scancode
-#include <gen/GlobalConstants.hpp> // for keylist enums
-//https://docs.godotengine.org/en/stable/classes/class_@globalscope.html#enum-globalscope-keylist
-
-
 // how to make godotconsolelogline a singleton and have FLConsole a private member?
 //struct FLConsole;
 //#include "GodotConsoleLogLine.h"
@@ -45,17 +31,13 @@
 #define CVAR_DEL_KEY 127
 #define FLCONSOLE_KEY 96
 
-#define FLCONSOLE_HELP_FILE "helpfile.txt"
-#define FLCONSOLE_HISTORY_FILE ".cvar_history"
-#define FLCONSOLE_SETTINGS_FILE ".glconsole_settings"
-#define FLCONSOLE_SCRIPT_FILE "default.script"
-#define FLCONSOLE_INITIAL_SCRIPT_FILE "initial.script"
+#define FLCONSOLE_HELP_FILE 			"helpfile.txt"
+#define FLCONSOLE_HISTORY_FILE 			".cvar_history"
+#define FLCONSOLE_SETTINGS_FILE 		".glconsole_settings"
+#define FLCONSOLE_SCRIPT_FILE 			"default.script.txt"
+#define FLCONSOLE_INITIAL_SCRIPT_FILE 	"initial.script.txt"
 
 #include <core/Godot.hpp>
-
-// TODO: forward declarations added to avoid compile errors. remove references and forward declarations
-struct Fl_Widget;
-struct GLWindow;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// The type of line entered. Used to determine how each line is treated.
@@ -104,19 +86,8 @@ class FLConsoleInstance
         //error and help versions of printf.
         void PrintError(const char *msg, ...);
         void PrintHelp(const char *msg, ...);
-        
-        //commands to the console...
-        void ToggleConsole();
-        bool IsOpen();
-		bool IsChanging();
-        void OpenConsole();
-        void CloseConsole();
- 
+
         void PrintAllCVars();
-
-        /// Return the Fl_Widget we belong to
-        Fl_Widget*     parent(); 
-
 
         // Help.
         bool Help(std::vector<std::string> *vArgs);
@@ -137,7 +108,6 @@ class FLConsoleInstance
         void ScriptRecordPause();
         void ScriptShow();
 
-
         /// clears all of the console's history.
         void HistoryClear();
 
@@ -146,12 +116,12 @@ class FLConsoleInstance
         int            handle( int e );
         int            handle2( const char * );
 
-        /// Fltk draw.
-        void draw();
+        void HistoryBack();
+        void HistoryForward();
 
 		std::string _TabComplete();
 		void SetCurrentCommand(const char *);
-
+		std::string GetCurrentCommand();
 
 
 private:
@@ -182,10 +152,10 @@ private:
         void EnterLogLine( const char *line, LineProperty prop = LINEPROP_LOG, bool display = true );
 
         /// display previous command in history on command line.
-        void HistoryBack();
+//        void HistoryBack();
    
         /// go forward in the history.
-        void HistoryForward();
+//        void HistoryForward();
 
         void _CheckInit();
 
@@ -203,14 +173,7 @@ private:
 
     private:
         /// Member cvars accessible from console.
-        float&          m_fConsoleBlinkRate;
-        float&          m_fConsoleAnimTime;
         int&            m_nConsoleMaxHistory;
-        int&            m_nConsoleLineSpacing;
-        int&            m_nConsoleLeftMargin;
-        int&            m_nConsoleVerticalMargin;
-        int&            m_nConsoleMaxLines;
-        float&          m_fOverlayPercent;
         std::string&    m_sHistoryFileName;
         std::string&    m_sScriptFileName;
         std::string&    m_sSettingsFileName;
@@ -223,26 +186,8 @@ private:
         CVarUtils::Color&       m_HelpColor;
         CVarUtils::Color&       m_ConsoleColor;
 
-
-        Fl_Widget*    m_pParentWidget; // the window in which the console is active.
-
         bool          m_bExecutingHistory; //Are we executing a script or not.
         bool          m_bSavingScript; // Are we saving a script.
-        bool          m_bConsoleOpen; // whether the console is drawing or not.
-        bool          m_bIsChanging; // whether the console is currently transitioning.
-        TimeStamp     m_Timer;
-        TimeStamp     m_BlinkTimer;
-        int           m_nWidth;
-        int           m_nHeight;
-        int           m_nViewportX;
-        int           m_nViewportY;
-        int           m_nViewportWidth;
-        int           m_nViewportHeight;
-
-        unsigned int  m_nCharHeight;
-        unsigned int  m_nCharWidth;
-
-        int           m_nScrollPixels;  //the number of pixels the text has been scrolled "up"
         int           m_nCommandNum;
  
         //history variables
@@ -250,15 +195,6 @@ private:
         char          m_cLastChar;
         unsigned int  m_nSuggestionNum;
 
-        // simplify getting gl viewport
-        struct {
-            int x;
-            int y;
-            int width;
-            int height;
-        } m_Viewport;
-
-        //std::string m_sMaxPrefix; // max prefix
         std::string             m_sCurrentCommandBeg; //< command being typed, up to cursor
         std::string             m_sCurrentCommandEnd; //< command being typed, after cursor
         std::deque<ConsoleLine> m_sConsoleText;       //< all lines of console text
@@ -354,29 +290,25 @@ class FLConsole
 {
     public:
         FLConsole();
-        Fl_Widget*  parent();
-        int
-        handle( int e );
-        int
-        handle2( const char * );
-        void        draw();
+
+        int handle( int e );
+        int handle2( const char * );
 
         std::string TabComplete();
         void SetCurrentCommand( const char * );
+        std::string GetCurrentCommand();
 
-        // wrapper
-        bool        IsOpen()
-        { 
-            return m_pFLConsoleInstance->IsOpen(); 
-        }
+		void HistoryBack()
+		{
+			m_pFLConsoleInstance->HistoryBack();
+		}
 
-        void OpenConsole()
-        {
-          m_pFLConsoleInstance->OpenConsole();
-        }
+		void HistoryForward()
+		{
+			m_pFLConsoleInstance->HistoryForward();
+		}
 
-
-    private:
+private:
         FLConsoleInstance*  m_pFLConsoleInstance; 
 };
 
@@ -394,14 +326,6 @@ inline FLConsole::FLConsole()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Fltk handle function.
-inline Fl_Widget* FLConsole::parent()
-{
-    return m_pFLConsoleInstance ? m_pFLConsoleInstance->parent() : NULL;
-}
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Fltk handle function.
 inline int FLConsole::handle( int e )
 {
     return m_pFLConsoleInstance->handle(e);
@@ -413,15 +337,6 @@ inline int FLConsole::handle2( const char * cmd)
 	return m_pFLConsoleInstance->handle2(cmd);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Fltk draw function.
-inline void FLConsole::draw()
-{
-    m_pFLConsoleInstance->draw();
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Fltk draw function.
 inline std::string FLConsole::TabComplete()
 {
 	return m_pFLConsoleInstance->_TabComplete();
@@ -431,29 +346,27 @@ inline void FLConsole::SetCurrentCommand( const char * cmd) {
 	return m_pFLConsoleInstance->SetCurrentCommand(cmd);
 }
 
+inline std::string FLConsole::GetCurrentCommand() {
+	return m_pFLConsoleInstance->GetCurrentCommand();
+}
 
 
 #include "CVar.h"
 #include "TrieNode.h"
-
 #include "FLConsoleFunction.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Constructor.
 inline FLConsoleInstance::FLConsoleInstance() :
-    // Init our member cvars  (can't init the names in the class decleration) 
-    m_fConsoleBlinkRate( CVarUtils::CreateCVar<float>(    "console.BlinkRate", 4.0 ) ), // cursor blinks per sec
-    m_fConsoleAnimTime( CVarUtils::CreateCVar<float>(     "console.AnimTime", 0.1 ) ),     // time the console animates
+    // Init our member cvars  (can't init the names in the class decleration)
     m_nConsoleMaxHistory( CVarUtils::CreateCVar<int>(     "console.history.MaxHistory", 100 ) ), // max lines ofconsole history
-    m_nConsoleLineSpacing( CVarUtils::CreateCVar<int>(    "console.LineSpacing", 2 ) ), // pixels between lines
-    m_nConsoleLeftMargin( CVarUtils::CreateCVar<int>(     "console.LeftMargin", 5 ) ),   // left margin in pixels
-    m_nConsoleVerticalMargin( CVarUtils::CreateCVar<int>( "console.VertMargin", 8 ) ),
-    m_nConsoleMaxLines( CVarUtils::CreateCVar<int>(       "console.MaxLines", 200 ) ),
-    m_fOverlayPercent( CVarUtils::CreateCVar<float>(      "console.OverlayPercent", 0.75 ) ),
     m_sHistoryFileName( CVarUtils::CreateCVar<> (         "console.history.HistoryFileName", std::string( FLCONSOLE_HISTORY_FILE ) ) ),
     m_sScriptFileName( CVarUtils::CreateCVar<> (          "script.ScriptFileName", std::string( FLCONSOLE_SCRIPT_FILE ) ) ),
     m_sSettingsFileName( CVarUtils::CreateCVar<> (        "console.settings.SettingsFileName", std::string( FLCONSOLE_SETTINGS_FILE ) ) ),
     m_sInitialScriptFileName( CVarUtils::CreateCVar<> (   "console.InitialScriptFileName", std::string( FLCONSOLE_INITIAL_SCRIPT_FILE ) ) ),
+
+
+    // TODO: convert to Godot
     m_LogColor( CVarUtils::CreateCVar<CVarUtils::Color>(           "console.colors.LogColor", CVarUtils::Color( 255, 255, 64 ) ) ),
     m_CommandColor( CVarUtils::CreateCVar<CVarUtils::Color>(       "console.colors.CommandColor", CVarUtils::Color( 255, 255, 255 ) ) ),
     m_FunctionColor( CVarUtils::CreateCVar<CVarUtils::Color>(      "console.colors.FunctionColor", CVarUtils::Color( 64, 255, 64 ) ) ),
@@ -462,10 +375,6 @@ inline FLConsoleInstance::FLConsoleInstance() :
     m_ConsoleColor( CVarUtils::CreateCVar<CVarUtils::Color>(       "console.colors.ConsoleColor", CVarUtils::Color( 25, 60, 130, 150 ) ) )
 {
     SetConsole( this );
-
-    m_pParentWidget = NULL;
-    m_Viewport.width = 0;
-    m_bConsoleOpen = false;
     m_bSavingScript = false;
 }
 
@@ -476,8 +385,6 @@ inline FLConsoleInstance::~FLConsoleInstance()
     HistorySave();
     SettingsSave();
 }
-
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Initialise the console. Sets up all the default values.
@@ -491,23 +398,7 @@ inline void FLConsoleInstance::Init()
 
     m_bExecutingHistory = false;
     m_bSavingScript = false;
-    m_bConsoleOpen = false;
-    m_bIsChanging = false;
- 
-    //
-    m_nCharHeight = 12;  // Hard coded for now
-    m_nCharWidth = 8;
-
-    m_nScrollPixels = 0;
     m_nCommandNum = 0;
-
-    // setup member CVars
-    m_Timer.Stamp();
-    m_BlinkTimer.Stamp();
-
-    // if the width and height ptrs aren't supplied then just extract the info
-    // from GL
-//    glGetIntegerv( GL_VIEWPORT, &m_Viewport.x );
 
     // add basic functions to the console
     CVarUtils::CreateCVar( "console.version", ConsoleVersion, "The current version of FLConsole" );
@@ -553,13 +444,15 @@ inline void FLConsoleInstance::Init()
     }
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Check that Init() has run. If not run.
 inline void FLConsoleInstance::_CheckInit()
 {
-    if( m_Viewport.width == 0 ) {
+	// TODO: replace with explicit initialization from godot?
+//    if( m_Viewport.width == 0 ) {
         Init();
-    }
+//    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -567,7 +460,6 @@ inline void FLConsoleInstance::_CheckInit()
 // NB: coordinates start from bottom left
 inline void FLConsoleInstance::glPrintf(int x, int y, const std::string& sMsg, ... )
 {
-//    glPrintf( x, y, sMsg.c_str() );
 	godot::Godot::print(sMsg.c_str()); // TODO: print to window
 }
 
@@ -598,60 +490,8 @@ inline void FLConsoleInstance::glPrintf(int x, int y, const char* sMsg, ... )
     }
     va_end( ap );
 
-//    gl_font( FL_COURIER, m_nCharHeight );
-//    glRasterPos2f( x, y );
-//    gl_draw( pBuffer, nResult );
-    //fl_draw( pBuffer, 0, 0 );
-
-
-    godot::Godot::print(pBuffer);
-//    godot::GodotConsoleLogLine::get_singleton();
-
+    godot::Godot::print(pBuffer);  // TODO: print to window
     delete[] pBuffer;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Toggle the console open or closed.
-inline void FLConsoleInstance::ToggleConsole()
-{
-    _CheckInit();
-    if( m_bConsoleOpen ) {
-        CloseConsole();
-    }
-    else {
-        OpenConsole();
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Is the console open?
-inline bool FLConsoleInstance::IsOpen()
-{
-    return m_bConsoleOpen;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline bool FLConsoleInstance::IsChanging() 
-{ 
-    return m_bIsChanging;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::OpenConsole() 
-{ 
-//    m_pParentWidget = Fl::focus();
-    m_bConsoleOpen = true; 
-    m_bIsChanging = true;
-    m_Timer.Stamp(); 
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::CloseConsole() 
-{ 
-    m_pParentWidget = NULL;
-    m_bConsoleOpen = false;
-    m_bIsChanging = true;
-    m_Timer.Stamp(); 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -727,37 +567,6 @@ inline void FLConsoleInstance::PrintError(const char *msg, ... )
     EnterLogLine( msgBuf, LINEPROP_ERROR );
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Gives you the height of the console in pixels (even if it is currently animating).
-inline int FLConsoleInstance::_GetConsoleHeight()
-{
-    //determine dimensions of scissor region
-    float fConsoleHeight = m_Viewport.height * m_fOverlayPercent;
-    if( m_Timer.Elapsed() > m_fConsoleAnimTime ) {
-        m_bIsChanging = false;
-        if( m_bConsoleOpen ) { // closing motion
-            fConsoleHeight = m_Viewport.height * m_fOverlayPercent;
-        }
-        else{
-            fConsoleHeight = 0;
-        }
-    }
-    // animating
-    if( m_bIsChanging ) {
-        float elapsed = m_Timer.Elapsed();
-        if( m_bConsoleOpen ) { // closing motion
-            fConsoleHeight = m_Viewport.height * (elapsed / m_fConsoleAnimTime)
-                * m_fOverlayPercent;
-        }
-        else {
-            fConsoleHeight =  m_Viewport.height *  (1-(elapsed /
-                        m_fConsoleAnimTime)) * m_fOverlayPercent;
-        }
-    }
-    else {
-    }
-    return (int)fConsoleHeight;
-}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Clears all of the console's history.
@@ -1025,290 +834,10 @@ inline bool FLConsoleInstance::_LoadExecuteHistory( std::string sFileName, bool 
     return true;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Render the console.
-inline void FLConsoleInstance::draw()
-{
-    _CheckInit();
-    if( m_bConsoleOpen || m_bIsChanging ) {
-//        glPushAttrib(GL_ENABLE_BIT | GL_DEPTH_BUFFER_BIT | GL_SCISSOR_BIT | GL_TRANSFORM_BIT );
-//
-//        glDisable(GL_LIGHTING);
-//        glDisable( GL_TEXTURE_2D );
-//        glEnable(GL_BLEND);
-//        glBlendFunc( GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA );
-//
-//        //get the width and heigtht of the viewport
-//        glGetIntegerv(GL_VIEWPORT, &m_Viewport.x );
-//
-//        //reset matrices and switch to ortho view
-//        glDisable(GL_DEPTH_TEST );
-//        glMatrixMode(GL_PROJECTION);
-//        glPushMatrix();
-//        glLoadIdentity();
-//        glOrtho(0,m_Viewport.width,0,m_Viewport.height,-1,1);
-//        glMatrixMode(GL_MODELVIEW);
-//        glPushMatrix();
-//        glLoadIdentity();
-//        glTranslated(0,0,0);
-//
-//        // set up a scissor region to draw the console in
-//        glScissor(1, m_Viewport.height - _GetConsoleHeight(), //bottom coord
-//                m_Viewport.width, //width
-//                m_Viewport.height); //top coord
-//        glEnable(GL_SCISSOR_TEST);
-//
-//        glBegin(GL_QUADS);
-//        {
-//            glColor4f( m_ConsoleColor.r,
-//                    m_ConsoleColor.g,
-//                    m_ConsoleColor.b,
-//                    m_ConsoleColor.a );
-//
-//            glNormal3f( 0.0f, 0.0f, 1.0f );
-//
-//            //just draw a full screen quad (it will be clipped by the scissor region)
-//            glVertex2f(0, 0);
-//            glVertex2f(0, m_Viewport.height-1);
-//            glVertex2f( m_Viewport.width-1, m_Viewport.height-1 );
-//            glVertex2f( m_Viewport.width-1, 0);
-//        }
-//        glEnd();
-//
-//        //draw text
-//        glDisable(GL_BLEND);
-        _RenderText();
-
-        //restore old matrices and properties...	
-//        glPopMatrix();
-//        glMatrixMode(GL_PROJECTION);
-//        glPopMatrix();
-//        glPopAttrib();
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline bool FLConsoleInstance::_IsCursorOn()
-{
-    float elapsed = m_BlinkTimer.Elapsed();
-    if(elapsed > (1.0 / m_fConsoleBlinkRate)) {
-        m_BlinkTimer.Stamp();
-        return true;
-    }
-    else if( elapsed > 0.50*(1.0 / m_fConsoleBlinkRate) ) {
-        return false;
-    }
-    else{
-        return true;
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::_RenderText()
-{
-    int nConsoleHeight = _GetConsoleHeight();
-
-    if( nConsoleHeight - m_nConsoleVerticalMargin < 0 ) {
-        return;
-    }
-
-    //set up a scissor region to draw the text in
-//    glScissor( 1 ,m_Viewport.height - _GetConsoleHeight() + 1, //bottom coord
-//            m_Viewport.width, //width
-//            nConsoleHeight - m_nConsoleVerticalMargin ); //top coord
-//    glEnable( GL_SCISSOR_TEST ); {
-//        glColor4f(m_?CommandColor.r, m_CommandColor.g, m_CommandColor.b, m_CommandColor.a );
-
-        int lines = (nConsoleHeight / m_nCharHeight);
-        int scrollLines = (m_nScrollPixels / m_nCharHeight);
-        lines += scrollLines;
-
-        //start drawing from bottom of console up...
-        int lineLoc = m_Viewport.height-1 - nConsoleHeight + m_nConsoleVerticalMargin;
-
-        //draw command line first
-        char cBlink = _IsCursorOn() ? '_' : ' ';
-        std::string em( m_sCurrentCommandBeg.length(), ' ');
-
-        // print up till the cursor
-        glPrintf( m_nConsoleLeftMargin, lineLoc - m_nScrollPixels, 
-                "> " + m_sCurrentCommandBeg );
-
-        // print at the cursor
-        glPrintf( m_nConsoleLeftMargin, lineLoc - m_nScrollPixels, 
-                "> " + em + cBlink );
-
-        // print after the cursor
-        glPrintf( m_nConsoleLeftMargin, lineLoc - m_nScrollPixels, 
-                "> " + em + m_sCurrentCommandEnd );
-
-
-        lineLoc += m_nCharHeight + m_nConsoleLineSpacing;
-
-        int count = 0;
-        for(  int i = 1 ; i < lines; i++ ) {	
-            if( count >= m_nConsoleMaxLines)
-                continue;
-            if( (int)m_sConsoleText.size() > i - 1 ) {
-                //skip this line if it was marked not to be displayed
-                if( !(m_sConsoleText.begin() + (i-1))->m_bDisplay) {
-                    lines++;
-                    continue;
-                }
-
-                std::deque<ConsoleLine>::iterator it = m_sConsoleText.begin() + i - 1;
-                std::string fulltext = (*it).m_sText;
-
-                //set the appropriate color
-//                switch((*it).m_nOptions)
-//                {
-//                    case LINEPROP_FUNCTION:
-//                        glColor3f(m_FunctionColor.r, m_FunctionColor.g, m_FunctionColor.b);
-//                        break;
-//                    case LINEPROP_ERROR:
-//                        glColor3f(m_ErrorColor.r, m_ErrorColor.g, m_ErrorColor.b);
-//                        break;
-//                    case LINEPROP_HELP:
-//                        glColor3f(m_HelpColor.r, m_HelpColor.g, m_HelpColor.b);
-//                        break;
-//                    default:
-//                        //regular log line...
-//                        glColor3f(m_LogColor.r, m_LogColor.g, m_LogColor.b);
-//                        break;
-//                }
-
-                //wrap text to multiple lines if necessary
-                int chars_per_line = (int)(1.65*m_Viewport.width / m_nCharHeight);
-                if( chars_per_line == 0 ) {
-                    // What should we do if the window has width == 0 ?
-                    return;
-                }
-
-                int iterations = (fulltext.length() / chars_per_line) + 1;
-                for(int j = iterations -1; j >= 0 ; j-- ) {
-                    //print one less line now that I have wrapped to another line
-                    if( j < iterations - 1) 
-                    {
-                        lines--;
-                        lineLoc += m_nCharHeight + m_nConsoleLineSpacing;
-                    }
-                    count++;
-                    int start = fulltext.substr(j*chars_per_line, chars_per_line).find_first_not_of( ' ' );
-                    if( start >= 0  ) { 
-                        glPrintf( m_nConsoleLeftMargin, lineLoc - m_nScrollPixels,
-                                fulltext.substr(j*chars_per_line+start, chars_per_line) );
-                    }
-                }
-            }
-            else
-                break;
-
-            lineLoc += m_nCharHeight + m_nConsoleLineSpacing;
-        }
-//    }
-//    glDisable(GL_SCISSOR_TEST);
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::ScrollUp(int pixels)
-{
-    _CheckInit();
-    if( m_bConsoleOpen ) {
-        if( m_nScrollPixels < 
-                int(m_sConsoleText.size()*(m_nCharHeight+m_nConsoleLineSpacing))
-                - _GetConsoleHeight() ){
-            m_nScrollPixels += pixels;
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::ScrollDown(int pixels)
-{
-    _CheckInit();
-    if( m_bConsoleOpen ) {
-        m_nScrollPixels -= pixels;
-        if( m_nScrollPixels < 0 ) {
-            m_nScrollPixels = 0;
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::ScrollUpLine() 
-{ 
-    ScrollUp( m_nCharHeight + m_nConsoleLineSpacing ); 
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::ScrollDownLine()
-{ 
-    ScrollDown(m_nCharHeight + m_nConsoleLineSpacing); 
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::CursorLeft()
-{
-    _CheckInit();
-    if( m_bConsoleOpen ) {
-        if( m_sCurrentCommandBeg.length()>0 ) {
-            m_sCurrentCommandEnd 
-                = m_sCurrentCommandBeg.substr( m_sCurrentCommandBeg.length()-1, m_sCurrentCommandBeg.length() )
-                + m_sCurrentCommandEnd;
-            m_sCurrentCommandBeg 
-                = m_sCurrentCommandBeg.substr( 0, m_sCurrentCommandBeg.length()-1 );
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::CursorRight()
-{
-    _CheckInit();
-    if( m_bConsoleOpen ) {
-        if( m_sCurrentCommandEnd.length()>0 ) {
-            m_sCurrentCommandBeg += m_sCurrentCommandEnd.substr( 0, 1 );
-            m_sCurrentCommandEnd = m_sCurrentCommandEnd.substr( 1, m_sCurrentCommandEnd.length() );
-        }
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::CursorToBeginningOfLine()
-{
-    _CheckInit();
-    if( m_bConsoleOpen ) {
-        m_sCurrentCommandEnd = m_sCurrentCommandBeg+m_sCurrentCommandEnd;
-        m_sCurrentCommandBeg = "";
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::CursorToEndOfLine()
-{
-    _CheckInit();
-    if( m_bConsoleOpen ) {
-        m_sCurrentCommandBeg += m_sCurrentCommandEnd;
-        m_sCurrentCommandEnd = "";
-    }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::ScrollUpPage() 
-{
-    ScrollUp( (int)((m_Viewport.height*m_fOverlayPercent) - 5*m_nCharHeight )); 
-}
-
-////////////////////////////////////////////////////////////////////////////////
-inline void FLConsoleInstance::ScrollDownPage()
-{
-    ScrollDown( (int)( (m_Viewport.height*m_fOverlayPercent) - 5*m_nCharHeight ) ); 
-}
-
-
+// TODO: rename function
 inline int FLConsoleInstance::handle2( const char * sInput ) {
 
-//	_CheckInit();
+	_CheckInit();
 //	const char* sInput = godotstr.utf8().get_data();
 	m_sCurrentCommandBeg = "";
 	m_sCurrentCommandBeg = std::string(sInput);
@@ -1316,230 +845,8 @@ inline int FLConsoleInstance::handle2( const char * sInput ) {
 	m_sCurrentCommandBeg = "";
 	m_sCurrentCommandEnd = "";
 	m_nCommandNum = 0; //reset history
-	m_nScrollPixels = 0; //reset scrolling
 }
 
-
-////////////////////////////////////////////////////////////////////////////////////`////////////////////////////////////
-/// Process key presses.
-inline int FLConsoleInstance::handle( int e )
-{
-    _CheckInit();
-
-//    if( e != FL_KEYDOWN && e != FL_KEYUP ){ // only handle presses
-//        return 0;
-//    }
-//    if( e == FL_KEYUP ){ // only really care about key down.
-//        return 1;
-//    }
-//
-//    if( !IsOpen() ){
-//        if( Fl::event_key() == '`' ){
-//            OpenConsole();
-//            return 1;
-//        }
-//        else{
-//            return 0;
-//        }
-//    }
-//    if( IsOpen() && Fl::event_key() == '`' ){
-//        CloseConsole();
-//        return 1;
-//    }
-//
-    int key = e;
-//    const char *sInput = Fl::event_text();
-//    const char *sInput = godot::OS;
-
-
-//// not working
-//    godot::String godotstr = godot::OS::get_singleton()->get_scancode_string(e);
-//    godot::Godot::print(godotstr);
-//	std::wstring ws = godotstr.c_str();
-//	std::string s( ws.begin(), ws.end() );
-//	const char* sInput = s.c_str();
-
-    godot::String godotstr = godot::OS::get_singleton()->get_scancode_string(e);
-    godot::Godot::print(godotstr);
-	const char* sInput = godotstr.utf8().get_data(); // Might be dangling pointer?
-
-    switch( key ) {
-//        case KEY_LEFT:
-//            CursorLeft();
-//            break;
-//        case KEY_RIGHT:
-//            CursorRight();
-//            break;
-//        case KEY_PAGEUP:
-//            ScrollUpPage();
-//            break;
-//        case KEY_PAGEDOWN:
-//            ScrollDownPage();
-//            break;
-//        case KEY_UP:
-//            if( Fl::event_state( FL_SHIFT ) ){
-//                ScrollUpLine();
-//            }
-//            else{
-//                HistoryBack();
-//            }
-//            break;
-//        case KEY_DOWN:
-//            if( Fl::event_state( FL_SHIFT ) ){
-//                ScrollDownLine();
-//            }
-//            else{
-//                HistoryForward();
-//            }
-//            break;
-//        case KEY_HOME:
-//            CursorToBeginningOfLine();
-//            break;
-//        case KEY_END:
-//            CursorToEndOfLine();
-//            break;
-//        case KEY_TAB:
-//            _TabComplete();
-//            break;
-    	case godot::GlobalConstants::KEY_ENTER:
-            _ProcessCurrentCommand();
-            m_sCurrentCommandBeg = "";
-            m_sCurrentCommandEnd = "";
-            m_nCommandNum = 0; //reset history
-            m_nScrollPixels = 0; //reset scrolling
-            break;
-//        case KEY_BACKSPACE:
-//            if( m_sCurrentCommandBeg.size() > 0 ) {
-//                m_sCurrentCommandBeg
-//                    = m_sCurrentCommandBeg.substr(0, m_sCurrentCommandBeg.size() - 1);
-//            }
-//            break;
-//        case KEY_DELETE:
-//        case CVAR_DEL_KEY: // delete
-//            if( m_sCurrentCommandEnd.size() > 0 ) {
-//                m_sCurrentCommandEnd
-//                    = m_sCurrentCommandEnd.substr(1, m_sCurrentCommandEnd.size() );
-//            }
-//            break;
-        default:
-//            if( Fl::event_length() == 1 && std::isprint(*sInput) ){
-            if( std::isprint(*sInput) ){
-                m_sCurrentCommandBeg += *sInput; // just add the key to the string
-                m_nCommandNum = 0; //reset history
-                m_nScrollPixels = 0; //reset scrolling
-            }
-            else{
-//                printf("WARNING: event_text()='%s', length = %d, val %d\n",
-//                        sInput, Fl::event_length(), key );
-            }
-    }
-
-
-
-
-    // TODO: following is old handler, kept for reference. remove old handle
-
-//
-//    if( e != FL_KEYDOWN && e != FL_KEYUP ){ // only handle presses
-//        return 0;
-//    }
-//    if( e == FL_KEYUP ){ // only really care about key down.
-//        return 1;
-//    }
-//
-//    if( !IsOpen() ){
-//        if( Fl::event_key() == '`' ){
-//            OpenConsole();
-//            return 1;
-//        }
-//        else{
-//            return 0;
-//        }
-//    }
-//    if( IsOpen() && Fl::event_key() == '`' ){
-//        CloseConsole();
-//        return 1;
-//    }
-//
-//    int key = Fl::event_key();
-//    const char *sInput = Fl::event_text();
-//    switch( key ) {
-//        case FL_Left:
-//            CursorLeft();
-//            break;
-//        case FL_Right:
-//            CursorRight();
-//            break;
-//        case FL_Page_Up:
-//            ScrollUpPage();
-//            break;
-//        case FL_Page_Down:
-//            ScrollDownPage();
-//            break;
-//        case FL_Up:
-//            if( Fl::event_state( FL_SHIFT ) ){
-//                ScrollUpLine();
-//            }
-//            else{
-//                HistoryBack();
-//            }
-//            break;
-//        case FL_Down:
-//            if( Fl::event_state( FL_SHIFT ) ){
-//                ScrollDownLine();
-//            }
-//            else{
-//                HistoryForward();
-//            }
-//            break;
-//        case FL_Home:
-//            CursorToBeginningOfLine();
-//            break;
-//        case FL_End:
-//            CursorToEndOfLine();
-//            break;
-//        case FL_Tab:
-//            _TabComplete();
-//            break;
-//        case FL_Enter:
-//            _ProcessCurrentCommand();
-//            m_sCurrentCommandBeg = "";
-//            m_sCurrentCommandEnd = "";
-//            m_nCommandNum = 0; //reset history
-//            m_nScrollPixels = 0; //reset scrolling
-//            break;
-//        case FL_BackSpace:
-//            if( m_sCurrentCommandBeg.size() > 0 ) {
-//                m_sCurrentCommandBeg
-//                    = m_sCurrentCommandBeg.substr(0, m_sCurrentCommandBeg.size() - 1);
-//            }
-//            break;
-//        case FL_Delete:
-//        case CVAR_DEL_KEY: // delete
-//            if( m_sCurrentCommandEnd.size() > 0 ) {
-//                m_sCurrentCommandEnd
-//                    = m_sCurrentCommandEnd.substr(1, m_sCurrentCommandEnd.size() );
-//            }
-//            break;
-//        default:
-//            if( Fl::event_length() == 1 && std::isprint(*sInput) ){
-//                m_sCurrentCommandBeg += *sInput; // just add the key to the string
-//                m_nCommandNum = 0; //reset history
-//                m_nScrollPixels = 0; //reset scrolling
-//            }
-//            else{
-////                printf("WARNING: event_text()='%s', length = %d, val %d\n",
-////                        sInput, Fl::event_length(), key );
-//            }
-//    }
-    return 1;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-inline Fl_Widget* FLConsoleInstance::parent()
-{
-    return m_pParentWidget;
-} 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 inline void FLConsoleInstance::ClearCurrentCommand() 
@@ -1556,7 +863,15 @@ inline void FLConsoleInstance::SetCurrentCommand(const char *cmd)
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+inline std::string FLConsoleInstance::GetCurrentCommand()
+{
+	return std::string(m_sCurrentCommandBeg);
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Add a line to the history log.
+// TODO: moved to GodotConsoleLogLine.cpp
+// TODO: test if impacted by header-only
 //inline void FLConsoleInstance::EnterLogLine(const char *line, const LineProperty prop, bool display)
 //{
 //    _CheckInit();
@@ -1634,6 +949,7 @@ inline void FLConsoleInstance::HistoryForward()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// TODO: Document what this is used for, or remove it
 inline bool FLConsoleInstance::_IsConsoleFunc( TrieNode *node )
 {
     if( typeid( ConsoleFunc ).name() 
@@ -1703,7 +1019,8 @@ void FLConsoleInstance::PrintAllCVars()
 ////////////////////////////////////////////////////////////////////////////////
 inline std::string FLConsoleInstance::_TabComplete()
 {
-    Trie& trie = CVarUtils::TrieInstance();
+	_CheckInit();
+	Trie& trie = CVarUtils::TrieInstance();
     TrieNode* node = trie.FindSubStr(  RemoveSpaces( m_sCurrentCommandBeg ) );
     if( !node ) {
         return "";
@@ -1779,10 +1096,12 @@ inline std::string FLConsoleInstance::_TabComplete()
                 std::string tmp = suggest_name_index_set[ii].first;
                 tmp.resize( longest, ' ' );
 
-                if( (commands+tmp).length() > m_Viewport.width/m_nCharWidth ) {
-                    cmdlines.push_back( commands );
-                    commands.clear();
-                }
+// TODO: update for Godot, or remove
+//                if( (commands+tmp).length() > m_Viewport.width/m_nCharWidth ) {
+//                    cmdlines.push_back( commands );
+//                    commands.clear();
+//                }
+
                 if( !_IsConsoleFunc( suggest[suggest_name_index_set[ii].second] ) ) {
                     commands += tmp;
                 }
@@ -1793,10 +1112,11 @@ inline std::string FLConsoleInstance::_TabComplete()
             for( unsigned int ii = 0; ii < suggest_name_index_set.size() ; ii++ ) {
                 std::string tmp = suggest_name_index_set[ii].first;
                 tmp.resize( longest, ' ' );
-                if( (functions+tmp).length() > m_Viewport.width/m_nCharWidth ) {
-                    funclines.push_back( functions );
-                    functions.clear();
-                }
+// TODO: update for Godot, or remove
+//                if( (functions+tmp).length() > m_Viewport.width/m_nCharWidth ) {
+//                    funclines.push_back( functions );
+//                    functions.clear();
+//                }
                 if( _IsConsoleFunc( suggest[suggest_name_index_set[ii].second] ) ) {
                     functions += tmp;
                 }
@@ -1970,17 +1290,17 @@ inline bool FLConsoleInstance::Help(std::vector<std::string> *vArgs)
             std::cerr << "WARNING: No custom " << FLCONSOLE_HELP_FILE << ". Using default FLConsole help." << std::endl;
 
             PrintHelp("");
-            PrintHelp("----------------- HELP -----------------");
-            PrintHelp("Press ~ key to open and close console");
-            PrintHelp("Press TAB to see the available commands and functions");
-            PrintHelp("Functions are shown in green and variables in yellow");
-            PrintHelp("Setting a value: [command] = value");
-            PrintHelp("Getting a value: [command]");
-            PrintHelp("Functions: [function] [arg1] [arg2] ...");
-            PrintHelp("Entering just the function name will give a description.");
-            PrintHelp("History: Up and Down arrow keys move through history.");
-            PrintHelp("Tab Completion: TAB does tab completion and makes suggestions.");
-            PrintHelp("----------------- HELP -----------------");
+            PrintHelp("[color=grey]----------------- HELP -----------------[/color]");
+            PrintHelp("[color=grey]Press ~ key to open and close console[/color]");
+            PrintHelp("[color=grey]Press TAB to see the available commands and functions[/color]");
+            PrintHelp("[color=grey]Functions are shown in green and variables in yellow[/color]");
+            PrintHelp("[color=grey]Setting a value: [command] = value[/color]");
+            PrintHelp("[color=grey]Getting a value: [command][/color]");
+            PrintHelp("[color=grey]Functions: [function] [arg1] [arg2] ...[/color]");
+            PrintHelp("[color=grey]Entering just the function name will give a description.[/color]");
+            PrintHelp("[color=grey]History: Up and Down arrow keys move through history.[/color]");
+            PrintHelp("[color=grey]Tab Completion: TAB does tab completion and makes suggestions.[/color]");
+            PrintHelp("[color=grey]----------------- HELP -----------------[/color]");
             PrintHelp("");
         }
     }

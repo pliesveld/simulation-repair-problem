@@ -19,12 +19,8 @@ class GodotConsoleLogLine : public godot::RichTextLabel {
 
 	static GodotConsoleLogLine *_singleton;
 
-
 	LineEdit *m_LineEdit;
-//	Node *m_LineEdit;
 	FLConsole m_Console;
-
-
 
 public:
 	static GodotConsoleLogLine *get_singleton();
@@ -33,10 +29,13 @@ public:
 
 	void _init();
 	void _ready();
+
+
 	void _command(String message);
 	void _logline(const char *line);
-
 	void tab_complete();
+	void HistoryBack();
+	void HistoryForward();
 	void _test();
 
 
@@ -46,6 +45,8 @@ public:
 		register_method("_init", &GodotConsoleLogLine::_init);
 		register_method("_ready", &GodotConsoleLogLine::_ready);
 		register_method("tab_complete", &GodotConsoleLogLine::tab_complete);
+		register_method("HistoryBack", &GodotConsoleLogLine::HistoryBack);
+		register_method("HistoryForward", &GodotConsoleLogLine::HistoryForward);
 		register_method("_test", &GodotConsoleLogLine::_test);
 		register_method("_command", &GodotConsoleLogLine::_command);
 		register_signal<GodotConsoleLogLine>("_command", "string_argument", GODOT_VARIANT_TYPE_STRING);

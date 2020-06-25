@@ -3,7 +3,7 @@ extends Control
 signal my_signal
 
 onready var scene = preload("res://core/machine_working.tscn")
-onready var n = 10
+onready var n = global.simulation.get_machine_count()
 
 func _update_machines():
 	var repair = $PanelContainer/VSplitContainer/Panel/CenterContainer

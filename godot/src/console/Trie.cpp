@@ -14,7 +14,7 @@
 #include "Trie.h"
 #include "TrieNode.h"
 
-#include <tinyxml2.h>
+#include "tinyxml2.h"
 #include <iostream>
 #include <sstream>
 #include <fstream>

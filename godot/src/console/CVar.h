@@ -199,7 +199,7 @@ namespace CVarUtils
      *  created with \c CreateCVar() ).
      *  \code
      *    int nGUIWidth = 100; // declare a variable as you usually do
-     *    AttachCVar<int>( "gui.Wdith", &nGuiWidth ); // attach the variable
+     *    AttachCVar<int>( "gui.Width", &nGuiWidth ); // attach the variable
      *
      *    nGUIWidth = 200;     // change the variable as you usually do
      *  \endcode

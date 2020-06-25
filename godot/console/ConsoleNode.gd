@@ -15,7 +15,7 @@ func _ready():
 
 func _input(event):
 	if event is InputEventKey and event.pressed:
-		global.simulation.ProcessKey(event.scancode)
+
 		if event.scancode == KEY_QUOTELEFT:
 			visible = not visible
 			global.simulation._ready()
@@ -26,6 +26,10 @@ func _input(event):
 			consoleRichTextLabel.tab_complete()
 			consoleLineEdit.get_text()
 			print("TODO: tab complete after: ", s)
+		elif event.scancode == KEY_UP:
+			consoleRichTextLabel.HistoryBack()
+		elif event.scancode == KEY_DOWN:
+			consoleRichTextLabel.HistoryForward()
 
 # TODO: work in single invocation
 # bool is_action_just_pressed ( String action ) const

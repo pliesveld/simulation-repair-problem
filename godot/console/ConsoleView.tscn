@@ -28,15 +28,33 @@ margin_bottom = 368.0
 size_flags_horizontal = 11
 size_flags_vertical = 11
 bbcode_enabled = true
-bbcode_text = "this
-[color=red]is[/color]
-a
-test
+bbcode_text = "[color=green]Running Simulation[/color]
+
+The following console variables are available:
+
+simulation.machines
+simulation.spares
+simulation.wait_time
+
+The following console commands are available:
+
+restart
+
+
 "
-text = "this
-is
-a
-test
+text = "Running Simulation
+
+The following console variables are available:
+
+simulation.machines
+simulation.spares
+simulation.wait_time
+
+The following console commands are available:
+
+restart
+
+
 "
 scroll_following = true
 script = ExtResource( 3 )

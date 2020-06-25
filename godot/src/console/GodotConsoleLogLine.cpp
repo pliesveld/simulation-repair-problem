@@ -1,6 +1,8 @@
 
 #include "GodotConsoleLogLine.h"
 #include <core/Godot.hpp>
+#include <Reference.hpp>
+
 
 #include <cassert>
 
@@ -25,17 +27,15 @@ GodotConsoleLogLine::GodotConsoleLogLine() {
 
 void GodotConsoleLogLine::_init() {
 	godot::Godot::print("GodotConsoleLogLine::_init() -- edit\n");
-	printf("_init\n");
+//	printf("_init\n");
 
 	GodotConsoleLogLine::_singleton = this;
 }
 
 void GodotConsoleLogLine::_ready() {
 	godot::Godot::print("GodotConsoleLogLine::_ready() -- edit\n");
-	printf("_ready\n");
-
-
-	printf("Finding lineEdit");
+//	printf("_ready\n");
+//	printf("Finding lineEdit");
 
 	m_LineEdit = (LineEdit *)get_node("../../ConsoleLineEdit");
 	assert(m_LineEdit != nullptr);
@@ -55,6 +55,21 @@ void GodotConsoleLogLine::tab_complete() {
 	}
 }
 
+void GodotConsoleLogLine::HistoryBack() {
+	m_Console.HistoryBack();
+	std::string cmd = m_Console.GetCurrentCommand();
+	godot::String godotstr(cmd.c_str());
+	m_LineEdit->clear();
+	m_LineEdit->append_at_cursor(godotstr);
+}
+
+void GodotConsoleLogLine::HistoryForward() {
+	m_Console.HistoryForward();
+	std::string cmd = m_Console.GetCurrentCommand();
+	godot::String godotstr(cmd.c_str());
+	m_LineEdit->clear();
+	m_LineEdit->append_at_cursor(godotstr);
+}
 
 void GodotConsoleLogLine::_test() {
 	godot::Godot::print("GodotConsoleLogLine::_test()\n");

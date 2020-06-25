@@ -4,5 +4,5 @@
 
 [resource]
 resource_name = "GodotConsole"
-class_name = "GodotConsole"
+class_name = "ExampleSimulation"
 library = ExtResource( 1 )

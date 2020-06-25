@@ -1,4 +1,3 @@
-#include "console/GodotConsole.h"
 #include "console/GodotConsoleLogLine.h"
 #include "exampleSimulation.h"
 #include "exampleSprite.h"
@@ -15,6 +14,6 @@ extern "C" void GDN_EXPORT godot_nativescript_init(void *handle) {
     godot::Godot::nativescript_init(handle);
 
 //    godot::register_class<godot::ExampleSprite>();
-    godot::register_class<GodotConsole>();
+    godot::register_class<ExampleSimulation>();
     godot::register_class<GodotConsoleLogLine>();
 }
