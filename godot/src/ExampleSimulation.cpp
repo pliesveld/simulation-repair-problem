@@ -1,6 +1,6 @@
 
 #include "console/GodotConsoleLogLine.h"
-#include "exampleSimulation.h"
+#include "ExampleSimulation.h"
 #include "console/FLConsole.h"
 
 #include <core/Godot.hpp>
