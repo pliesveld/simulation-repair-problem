@@ -1,47 +1,36 @@
+#include <cassert>
 
-#include "GodotConsoleLogLine.h"
 #include <core/Godot.hpp>
 #include <Reference.hpp>
 
-
-#include <cassert>
-
 using namespace godot;
 
+#include "GDConsole.h"
 
-GodotConsoleLogLine *GodotConsoleLogLine::_singleton = NULL;
+GDConsole *GDConsole::_singleton = NULL;
 
-//Engine *Engine::get_singleton() {
-//	return singleton;
-//}
-
-GodotConsoleLogLine * GodotConsoleLogLine::get_singleton() {
-	if (!GodotConsoleLogLine::_singleton) {
-		GodotConsoleLogLine::_singleton = new GodotConsoleLogLine;
+GDConsole * GDConsole::get_singleton() {
+	if (!GDConsole::_singleton) {
+		GDConsole::_singleton = new GDConsole;
 	}
-	return GodotConsoleLogLine::_singleton;
+	return GDConsole::_singleton;
 }
 
-GodotConsoleLogLine::GodotConsoleLogLine() {
+GDConsole::GDConsole() {
 }
 
-void GodotConsoleLogLine::_init() {
-	godot::Godot::print("GodotConsoleLogLine::_init() -- edit\n");
-//	printf("_init\n");
-
-	GodotConsoleLogLine::_singleton = this;
+void GDConsole::_init() {
+	godot::Godot::print("GDConsole::_init()\n");
+	GDConsole::_singleton = this;
 }
 
-void GodotConsoleLogLine::_ready() {
-	godot::Godot::print("GodotConsoleLogLine::_ready() -- edit\n");
-//	printf("_ready\n");
-//	printf("Finding lineEdit");
-
+void GDConsole::_ready() {
+	godot::Godot::print("GDConsole::_ready()\n");
 	m_LineEdit = (LineEdit *)get_node("../../ConsoleLineEdit");
 	assert(m_LineEdit != nullptr);
 }
 
-void GodotConsoleLogLine::tab_complete() {
+void GDConsole::TabComplete() {
 	{
 		godot::String godotstr = m_LineEdit->get_text();
 		m_Console.SetCurrentCommand(godotstr.utf8().get_data());
@@ -55,7 +44,7 @@ void GodotConsoleLogLine::tab_complete() {
 	}
 }
 
-void GodotConsoleLogLine::HistoryBack() {
+void GDConsole::HistoryBack() {
 	m_Console.HistoryBack();
 	std::string cmd = m_Console.GetCurrentCommand();
 	godot::String godotstr(cmd.c_str());
@@ -63,7 +52,7 @@ void GodotConsoleLogLine::HistoryBack() {
 	m_LineEdit->append_at_cursor(godotstr);
 }
 
-void GodotConsoleLogLine::HistoryForward() {
+void GDConsole::HistoryForward() {
 	m_Console.HistoryForward();
 	std::string cmd = m_Console.GetCurrentCommand();
 	godot::String godotstr(cmd.c_str());
@@ -71,16 +60,12 @@ void GodotConsoleLogLine::HistoryForward() {
 	m_LineEdit->append_at_cursor(godotstr);
 }
 
-void GodotConsoleLogLine::_test() {
-	godot::Godot::print("GodotConsoleLogLine::_test()\n");
-}
-
-void GodotConsoleLogLine::_logline(const char *line) {
+void GDConsole::_logline(const char *line) {
 	godot::String godotstr(line);
 	append_bbcode(godotstr);
 }
 
-void GodotConsoleLogLine::_command(String message) {
+void GDConsole::_command(String message) {
 	Godot::print("Received command:");
 	Godot::print(message);
 	append_bbcode(message);

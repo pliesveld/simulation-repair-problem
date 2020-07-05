@@ -8,7 +8,6 @@ class ExampleSimulation : public godot::Reference {
 	GODOT_CLASS(ExampleSimulation, godot::Reference
 	);
 
-
 	// Note: type is int &
 	int &m_nMachines;
 	int &m_nSpares;
@@ -21,10 +20,21 @@ public:
 	void _init();
 	void _ready();
 
-	int get_machine_count();
-	int get_spare_count();
-	int get_next_failure_time();
-	int get_next_repair_time();
+	inline int get_machine_count() {
+		return m_nMachines;
+	}
+
+	inline int get_spare_count() {
+		return m_nSpares;
+	}
+
+	inline int get_next_failure_time() {
+		return m_nFailureTimer;
+	}
+
+	inline int get_next_repair_time() {
+		return m_nRepairTimer;
+	}
 
 	static void _register_methods() {
 		register_method("_init", &ExampleSimulation::_init);

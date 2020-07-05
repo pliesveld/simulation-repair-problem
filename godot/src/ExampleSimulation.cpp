@@ -1,5 +1,5 @@
 
-#include "console/GodotConsoleLogLine.h"
+#include "GDConsole.h"
 #include "ExampleSimulation.h"
 #include "console/FLConsole.h"
 
@@ -28,26 +28,10 @@ void ExampleSimulation::_ready() {
 	godot::Godot::print("ExampleSimulation::_ready()\n");
 }
 
-int ExampleSimulation::get_machine_count() {
-	return m_nMachines;
-}
-
-int ExampleSimulation::get_spare_count() {
-	return m_nSpares;
-}
-
-int ExampleSimulation::get_next_failure_time() {
-	return m_nFailureTimer;
-}
-
-int ExampleSimulation::get_next_repair_time() {
-	return m_nRepairTimer;
-}
-
 bool ConsoleSimulationRestart( std::vector<std::string> *vArgs ) {
 	printf("Console Restart Command Called.");
 
-	Node *node = GodotConsoleLogLine::get_singleton()->get_node("/root/event_bus");
+	Node *node = GDConsole::get_singleton()->get_node("/root/event_bus");
 	if( node ) {
 		godot::Godot::print("node found");
 		node->emit_signal("restart_signal", "restart");
@@ -55,5 +39,4 @@ bool ConsoleSimulationRestart( std::vector<std::string> *vArgs ) {
 		godot::Godot::print("Node not found.");
 	}
 }
-
 

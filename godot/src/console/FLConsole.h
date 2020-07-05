@@ -23,9 +23,9 @@
 
 #include <core/Godot.hpp>
 
-// how to make godotconsolelogline a singleton and have FLConsole a private member?
+// how to make GDConsole a singleton and have FLConsole a private member?
 //struct FLConsole;
-//#include "GodotConsoleLogLine.h"
+//#include "GDConsole.h"
 
 
 #define CVAR_DEL_KEY 127
@@ -870,7 +870,7 @@ inline std::string FLConsoleInstance::GetCurrentCommand()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// Add a line to the history log.
-// TODO: moved to GodotConsoleLogLine.cpp
+// TODO: moved to GDConsole.cpp
 // TODO: test if impacted by header-only
 //inline void FLConsoleInstance::EnterLogLine(const char *line, const LineProperty prop, bool display)
 //{

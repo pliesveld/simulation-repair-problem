@@ -1,58 +1,47 @@
-#ifndef GODOT_CPP_GODOTCONSOLELOGLINE_H
-#define GODOT_CPP_GODOTCONSOLELOGLINE_H
+#ifndef GODOT_CPP_GDCONSOLE_H
+#define GODOT_CPP_GDCONSOLE_H
 
 #include <core/Godot.hpp>
 #include <gen/RichTextLabel.hpp>
 #include <gen/LineEdit.hpp>
-#include <Reference.hpp>
 
-
-
-#include "FLConsole.h"
-
+#include "console/FLConsole.h"
 
 using namespace godot;
 
-class GodotConsoleLogLine : public godot::RichTextLabel {
-	GODOT_CLASS(GodotConsoleLogLine, godot::RichTextLabel
+class GDConsole : public godot::RichTextLabel {
+	GODOT_CLASS(GDConsole, godot::RichTextLabel
 	);
 
-	static GodotConsoleLogLine *_singleton;
+	static GDConsole *_singleton;
 
 	LineEdit *m_LineEdit;
 	FLConsole m_Console;
 
 public:
-	static GodotConsoleLogLine *get_singleton();
+	static GDConsole *get_singleton();
 
-	GodotConsoleLogLine();
+	GDConsole();
 
 	void _init();
 	void _ready();
 
-
 	void _command(String message);
 	void _logline(const char *line);
-	void tab_complete();
+	void TabComplete();
 	void HistoryBack();
 	void HistoryForward();
-	void _test();
-
 
 	void EnterLogLine(const char *line, const LineProperty prop, bool display);
 
 	static void _register_methods() {
-		register_method("_init", &GodotConsoleLogLine::_init);
-		register_method("_ready", &GodotConsoleLogLine::_ready);
-		register_method("tab_complete", &GodotConsoleLogLine::tab_complete);
-		register_method("HistoryBack", &GodotConsoleLogLine::HistoryBack);
-		register_method("HistoryForward", &GodotConsoleLogLine::HistoryForward);
-		register_method("_test", &GodotConsoleLogLine::_test);
-		register_method("_command", &GodotConsoleLogLine::_command);
-		register_signal<GodotConsoleLogLine>("_command", "string_argument", GODOT_VARIANT_TYPE_STRING);
+		register_method("_init", &GDConsole::_init);
+		register_method("_ready", &GDConsole::_ready);
+		register_method("CommandEntered", &GDConsole::_command);
+		register_method("TabComplete", &GDConsole::TabComplete);
+		register_method("HistoryBack", &GDConsole::HistoryBack);
+		register_method("HistoryForward", &GDConsole::HistoryForward);
 	}
-
-
 };
 
 
@@ -60,7 +49,7 @@ inline void FLConsoleInstance::EnterLogLine(const char *line, const LineProperty
 {
 	_CheckInit();
 
-	GodotConsoleLogLine *consoleLogLine = GodotConsoleLogLine::get_singleton();
+	GDConsole *consoleLogLine = GDConsole::get_singleton();
 	if(consoleLogLine == nullptr) {
 		godot::Godot::print("Error, null singleton");
 	} else {

@@ -15,14 +15,12 @@ func _ready():
 
 func _input(event):
 	if event is InputEventKey and event.pressed:
-
 		if event.scancode == KEY_QUOTELEFT:
 			visible = not visible
 			global.simulation._ready()
 		elif event.scancode == KEY_TAB:
 			var s = consoleLineEdit.get_text()
-			consoleRichTextLabel.tab_complete()
-			consoleLineEdit.get_text()
+			consoleRichTextLabel.TabComplete()
 		elif event.scancode == KEY_UP:
 			consoleRichTextLabel.HistoryBack()
 		elif event.scancode == KEY_DOWN:

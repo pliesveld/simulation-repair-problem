@@ -2,7 +2,7 @@
 
 [ext_resource path="res://console/ConsoleNode.gd" type="Script" id=1]
 [ext_resource path="res://console/ConsolePanel.gd" type="Script" id=2]
-[ext_resource path="res://demo/bin/gdConsoleLogline.gdns" type="Script" id=3]
+[ext_resource path="res://demo/bin/gdconsole.gdns" type="Script" id=3]
 
 [node name="ConsoleNode" type="Control"]
 margin_right = 1920.0
@@ -68,4 +68,4 @@ margin_bottom = 400.0
 size_flags_horizontal = 11
 size_flags_vertical = 9
 [connection signal="visibility_changed" from="ConsoleContainer/ConsolePanel" to="ConsoleContainer/ConsolePanel" method="_on_Panel_visibility_changed"]
-[connection signal="text_entered" from="ConsoleContainer/ConsoleLineEdit" to="ConsoleContainer/ConsolePanel/ConsoleRichTextLabel" method="_command"]
+[connection signal="text_entered" from="ConsoleContainer/ConsoleLineEdit" to="ConsoleContainer/ConsolePanel/ConsoleRichTextLabel" method="CommandEntered"]
