@@ -26,7 +26,7 @@ public:
 	void _init();
 	void _ready();
 
-	void _command(String message);
+	void CommandEntered(String message);
 	void _logline(const char *line);
 	void TabComplete();
 	void HistoryBack();
@@ -37,7 +37,7 @@ public:
 	static void _register_methods() {
 		register_method("_init", &GDConsole::_init);
 		register_method("_ready", &GDConsole::_ready);
-		register_method("CommandEntered", &GDConsole::_command);
+		register_method("CommandEntered", &GDConsole::CommandEntered);
 		register_method("TabComplete", &GDConsole::TabComplete);
 		register_method("HistoryBack", &GDConsole::HistoryBack);
 		register_method("HistoryForward", &GDConsole::HistoryForward);

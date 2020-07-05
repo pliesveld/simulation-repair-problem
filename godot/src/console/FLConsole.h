@@ -111,10 +111,7 @@ class FLConsoleInstance
         /// clears all of the console's history.
         void HistoryClear();
 
-
-        /// Handle Fltk events, e.g. Add a character to the command line.
-        int            handle( int e );
-        int            handle2( const char * );
+        int handleCommandEntered( const char * );
 
         void HistoryBack();
         void HistoryForward();
@@ -122,8 +119,6 @@ class FLConsoleInstance
 		std::string _TabComplete();
 		void SetCurrentCommand(const char *);
 		std::string GetCurrentCommand();
-
-
 private:
 
         // printf style function take position to print to as well
@@ -291,9 +286,7 @@ class FLConsole
     public:
         FLConsole();
 
-        int handle( int e );
-        int handle2( const char * );
-
+        int handleCommandEntered( const char * );
         std::string TabComplete();
         void SetCurrentCommand( const char * );
         std::string GetCurrentCommand();
@@ -324,17 +317,9 @@ inline FLConsole::FLConsole()
     m_pFLConsoleInstance = GetConsole();
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/// Fltk handle function.
-inline int FLConsole::handle( int e )
+inline int FLConsole::handleCommandEntered( const char * cmd)
 {
-    return m_pFLConsoleInstance->handle(e);
-}
-
-
-inline int FLConsole::handle2( const char * cmd)
-{
-	return m_pFLConsoleInstance->handle2(cmd);
+	return m_pFLConsoleInstance->handleCommandEntered(cmd);
 }
 
 inline std::string FLConsole::TabComplete()
@@ -834,11 +819,9 @@ inline bool FLConsoleInstance::_LoadExecuteHistory( std::string sFileName, bool 
     return true;
 }
 
-// TODO: rename function
-inline int FLConsoleInstance::handle2( const char * sInput ) {
+inline int FLConsoleInstance::handleCommandEntered( const char * sInput ) {
 
 	_CheckInit();
-//	const char* sInput = godotstr.utf8().get_data();
 	m_sCurrentCommandBeg = "";
 	m_sCurrentCommandBeg = std::string(sInput);
 	_ProcessCurrentCommand();

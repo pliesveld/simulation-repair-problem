@@ -65,12 +65,9 @@ void GDConsole::_logline(const char *line) {
 	append_bbcode(godotstr);
 }
 
-void GDConsole::_command(String message) {
-	Godot::print("Received command:");
-	Godot::print(message);
+void GDConsole::CommandEntered(String message) {
 	append_bbcode(message);
 	newline();
-
-	m_Console.handle2(message.utf8().get_data());
+	m_Console.handleCommandEntered(message.utf8().get_data());
 	m_LineEdit->clear();
 }
