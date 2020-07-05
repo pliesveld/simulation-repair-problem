@@ -30,8 +30,6 @@ func _ready():
 	
 func _handle_init_event(data):
 	n = data.n
-	print("control", data)
-	print(n)
 	_update_machines()	
 	
 func _handle_crash_event(data):

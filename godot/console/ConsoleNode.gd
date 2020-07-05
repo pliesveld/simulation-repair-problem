@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 
 onready var panel = get_node("ConsoleContainer")
 onready var consoleLineEdit = get_node("ConsoleContainer/ConsoleLineEdit")
@@ -19,13 +19,10 @@ func _input(event):
 		if event.scancode == KEY_QUOTELEFT:
 			visible = not visible
 			global.simulation._ready()
-			print("KEY_QUOTELEFT was pressed")
 		elif event.scancode == KEY_TAB:
 			var s = consoleLineEdit.get_text()
-			print("TODO: tab complete before: ", s)
 			consoleRichTextLabel.tab_complete()
 			consoleLineEdit.get_text()
-			print("TODO: tab complete after: ", s)
 		elif event.scancode == KEY_UP:
 			consoleRichTextLabel.HistoryBack()
 		elif event.scancode == KEY_DOWN:

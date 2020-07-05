@@ -4,19 +4,21 @@
 [ext_resource path="res://console/ConsolePanel.gd" type="Script" id=2]
 [ext_resource path="res://demo/bin/gdConsoleLogline.gdns" type="Script" id=3]
 
-[node name="ConsoleNode" type="Node2D"]
+[node name="ConsoleNode" type="Control"]
+margin_right = 1920.0
+margin_bottom = 1080.0
+size_flags_vertical = 0
 script = ExtResource( 1 )
 
 [node name="ConsoleContainer" type="VBoxContainer" parent="."]
 margin_right = 1024.0
 margin_bottom = 400.0
-size_flags_horizontal = 11
-size_flags_vertical = 11
+size_flags_vertical = 3
 
 [node name="ConsolePanel" type="Panel" parent="ConsoleContainer"]
 margin_right = 1024.0
 margin_bottom = 372.0
-size_flags_horizontal = 11
+size_flags_horizontal = 3
 size_flags_vertical = 11
 script = ExtResource( 2 )
 
