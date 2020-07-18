@@ -5,4 +5,13 @@ venv
 *.swp
 .sconsign.dblite
 
+godot/godot-cpp/godot_headers
+
+
+# console
+.cvar_history
+.glconsole_settings
+cvars.xml
+default.script
+
 
