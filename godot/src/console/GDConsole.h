@@ -5,7 +5,7 @@
 #include <gen/RichTextLabel.hpp>
 #include <gen/LineEdit.hpp>
 
-#include "console/FLConsole.h"
+#include "FLConsole.h"
 
 using namespace godot;
 
@@ -17,6 +17,7 @@ class GDConsole : public godot::RichTextLabel {
 
 	LineEdit *m_LineEdit;
 	FLConsole m_Console;
+	bool bInitialized = false;
 
 public:
 	static GDConsole *get_singleton();
@@ -27,7 +28,7 @@ public:
 	void _ready();
 
 	void CommandEntered(String message);
-	void _logline(const char *line);
+	void LogLine(const char *line);
 	void TabComplete();
 	void HistoryBack();
 	void HistoryForward();
@@ -43,37 +44,5 @@ public:
 		register_method("HistoryForward", &GDConsole::HistoryForward);
 	}
 };
-
-
-inline void FLConsoleInstance::EnterLogLine(const char *line, const LineProperty prop, bool display)
-{
-	_CheckInit();
-
-	GDConsole *consoleLogLine = GDConsole::get_singleton();
-	if(consoleLogLine == nullptr) {
-		godot::Godot::print("Error, null singleton");
-	} else {
-		godot::String s(line);
-		Godot::print(s);
-
-		consoleLogLine->_logline(line);
-		consoleLogLine->newline();
-
-// script history
-		if( (int)m_sConsoleText.size() >= m_nConsoleMaxHistory ) {
-			m_sConsoleText.pop_back();
-		}
-
-		if( line != NULL ) {
-			m_sConsoleText.push_front( ConsoleLine(std::string(line), prop, display) );
-
-			if( m_bSavingScript && prop != LINEPROP_ERROR ) {
-				m_ScriptText.push_front( ConsoleLine(std::string(line), prop, display) );
-			}
-		}
-	}
-//
-
-}
 
 #endif
