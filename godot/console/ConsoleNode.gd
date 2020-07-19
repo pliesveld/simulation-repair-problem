@@ -1,6 +1,5 @@
 extends Control
 
-onready var panel = get_node("ConsoleContainer")
 onready var consoleLineEdit = get_node("MarginContainer/ConsoleContainer/ConsoleLineEdit")
 onready var consoleRichTextLabel = get_node("MarginContainer/ConsoleContainer/ConsolePanel/ConsoleRichTextLabel")
 
