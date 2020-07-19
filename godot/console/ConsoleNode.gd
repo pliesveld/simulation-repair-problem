@@ -1,8 +1,8 @@
 extends Control
 
 onready var panel = get_node("ConsoleContainer")
-onready var consoleLineEdit = get_node("ConsoleContainer/ConsoleLineEdit")
-onready var consoleRichTextLabel = get_node("ConsoleContainer/ConsolePanel/ConsoleRichTextLabel")
+onready var consoleLineEdit = get_node("MarginContainer/ConsoleContainer/ConsoleLineEdit")
+onready var consoleRichTextLabel = get_node("MarginContainer/ConsoleContainer/ConsolePanel/ConsoleRichTextLabel")
 
 # https://docs.godotengine.org/en/stable/tutorials/inputs/input_examples.html
 # https://godotengine.org/qa/15055/button-to-call-new-window
