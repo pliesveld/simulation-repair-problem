@@ -50,6 +50,16 @@ inline bool ConsoleFind( std::vector<std::string> *vArgs )
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+/// Print all cvars
+inline bool ConsoleCVarList( std::vector<std::string> *vArgs )
+{
+	FLConsoleInstance* pConsole = GetConsole();
+	pConsole->PrintAllCVars();
+
+	return true;
+}
+
+////////////////////////////////////////////////////////////////////////////////
 /// First argument indicates the file name, the following arguments are
 //  used to choose a subset of variables to be saved using the provided
 //  substrings.

@@ -1,0 +1,184 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://console/ConsoleWindow.gd" type="Script" id=1]
+[ext_resource path="res://demo/bin/gdconsole.gdns" type="Script" id=2]
+[ext_resource path="res://console/ConsoleLineEdit.gd" type="Script" id=3]
+[ext_resource path="res://console/Timer.gd" type="Script" id=4]
+
+[node name="ConsoleWindow" type="VBoxContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 1 )
+
+[node name="ConsoleView" type="NinePatchRect" parent="."]
+self_modulate = Color( 1, 1, 1, 0.52549 )
+margin_right = 1920.0
+margin_bottom = 1076.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+region_rect = Rect2( 1259.04, 595.808, 120.657, 109.492 )
+patch_margin_left = 118
+patch_margin_top = 92
+patch_margin_right = 109
+patch_margin_bottom = 98
+
+[node name="MarginContainer" type="MarginContainer" parent="ConsoleView"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 50.0
+margin_right = -52.0
+margin_bottom = -41.0
+size_flags_horizontal = 11
+size_flags_vertical = 11
+
+[node name="ConsoleContainer" type="VBoxContainer" parent="ConsoleView/MarginContainer"]
+margin_right = 1818.0
+margin_bottom = 1035.0
+mouse_filter = 2
+size_flags_vertical = 3
+
+[node name="ConsolePanel" type="Panel" parent="ConsoleView/MarginContainer/ConsoleContainer"]
+self_modulate = Color( 0.0431373, 0.0431373, 0.0431373, 0.470588 )
+margin_right = 1818.0
+margin_bottom = 1001.0
+size_flags_horizontal = 3
+size_flags_vertical = 11
+
+[node name="ConsoleRichTextLabel" type="RichTextLabel" parent="ConsoleView/MarginContainer/ConsoleContainer/ConsolePanel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.90247
+margin_top = 5.80502
+margin_right = -3.09753
+margin_bottom = -2.19495
+focus_mode = 2
+size_flags_horizontal = 11
+size_flags_vertical = 11
+bbcode_enabled = true
+bbcode_text = "
+
+Godot's RichTextLabel supports BBCode tags to add rendering effects to the text:
+
+[b]bold[/b]
+[i]italics[/i]
+[u]underline[/u]
+[s]strikethrough[/s]
+
+code block (monospace font):
+[code]
+func _process_custom_fx(char_fx):
+    # Get parameters, or use the provided default value if missing.
+    var clear_time = char_fx.env.get(\"clean\", 2.0)
+    var dirty_time = char_fx.env.get(\"dirty\", 1.0)
+    var text_span = char_fx.env.get(\"span\", 50)
+
+    var value = char_fx.character
+
+    var matrix_time = fmod(char_fx.elapsed_time + (char_fx.absolute_index / float(text_span)), \\
+                           clear_time + dirty_time)
+    var text_span = char_fx.env.get(\"span\", 50)
+[/code]
+
+img:
+[indent]
+[img]res://images/icon.png[/img]
+[/indent]
+
+alignment:
+
+[left]left[/left]
+[center]center[/center]
+[right]right[/right]
+
+color:
+
+[table=3][cell][color=aqua]aqua[/color][/cell][cell][color=black]black[/color][/cell][cell][color=blue]blue[/color][/cell][cell][color=fuchsia]fuchsia[/color][/cell][cell][color=gray]gray[/color][/cell][cell][color=green]green[/color][/cell][cell][color=lime]lime[/color][/cell][cell][color=maroon]maroon[/color][/cell][cell][color=navy]navy[/color][/cell][cell][color=purple]purple[/color][/cell][cell][color=red]red[/color][/cell][cell][color=silver]silver[/color][/cell][cell][color=teal]teal[/color][/cell][cell][color=white]white[/color][/cell][cell][color=yellow]yellow[/color][/cell][/table]
+
+RichTextLabel reference:
+
+[indent]
+[url]https://docs.godotengine.org/en/stable/tutorials/gui/bbcode_in_richtextlabel.html[/url]
+[/indent]
+
+"
+text = "
+
+Godot's RichTextLabel supports BBCode tags to add rendering effects to the text:
+
+bold
+italics
+underline
+strikethrough
+
+code block (monospace font):
+
+func _process_custom_fx(char_fx):
+    # Get parameters, or use the provided default value if missing.
+    var clear_time = char_fx.env.get(\"clean\", 2.0)
+    var dirty_time = char_fx.env.get(\"dirty\", 1.0)
+    var text_span = char_fx.env.get(\"span\", 50)
+
+    var value = char_fx.character
+
+    var matrix_time = fmod(char_fx.elapsed_time + (char_fx.absolute_index / float(text_span)), \\
+                           clear_time + dirty_time)
+    var text_span = char_fx.env.get(\"span\", 50)
+
+
+img:
+	
+
+
+
+alignment:
+
+[left]left[/left]
+center
+right
+
+color:
+
+aquablackbluefuchsiagraygreenlimemaroonnavypurpleredsilvertealwhiteyellow
+
+RichTextLabel reference:
+
+	
+https://docs.godotengine.org/en/stable/tutorials/gui/bbcode_in_richtextlabel.html
+
+
+"
+scroll_following = true
+selection_enabled = true
+script = ExtResource( 2 )
+
+[node name="ConsoleLineEdit" type="LineEdit" parent="ConsoleView/MarginContainer/ConsoleContainer"]
+margin_top = 1005.0
+margin_right = 1818.0
+margin_bottom = 1035.0
+rect_min_size = Vector2( 0, 30 )
+focus_next = NodePath(".")
+focus_previous = NodePath(".")
+size_flags_horizontal = 11
+size_flags_vertical = 9
+caret_blink = true
+caret_blink_speed = 0.5
+script = ExtResource( 3 )
+
+[node name="TransparentPanel" type="Panel" parent="."]
+modulate = Color( 1, 1, 1, 0 )
+self_modulate = Color( 1, 1, 1, 0 )
+margin_top = 1080.0
+margin_right = 1920.0
+margin_bottom = 1080.0
+mouse_filter = 2
+size_flags_vertical = 9
+size_flags_stretch_ratio = 4.0
+
+[node name="Timer" type="Timer" parent="."]
+process_mode = 0
+wait_time = 0.01
+script = ExtResource( 4 )
+[connection signal="text_entered" from="ConsoleView/MarginContainer/ConsoleContainer/ConsoleLineEdit" to="ConsoleView/MarginContainer/ConsoleContainer/ConsolePanel/ConsoleRichTextLabel" method="CommandEntered"]
+[connection signal="visibility_changed" from="ConsoleView/MarginContainer/ConsoleContainer/ConsoleLineEdit" to="ConsoleView/MarginContainer/ConsoleContainer/ConsoleLineEdit" method="_on_ConsoleLineEdit_visibility_changed"]
+[connection signal="timeout" from="Timer" to="Timer" method="_on_Timer_timeout"]

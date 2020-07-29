@@ -27,6 +27,9 @@
 //struct FLConsole;
 //#include "GDConsole.h"
 
+#pragma warning( push )
+#pragma warning( disable : 4267)
+#pragma warning( disable : 4101)
 
 #define CVAR_DEL_KEY 127
 #define FLCONSOLE_KEY 96
@@ -389,7 +392,8 @@ inline void FLConsoleInstance::Init()
     CVarUtils::CreateCVar( "console.version", ConsoleVersion, "The current version of FLConsole" );
     CVarUtils::CreateCVar( "help", ConsoleHelp, "Gives help information about the console or more specifically about a CVar." );
     CVarUtils::CreateCVar( "find", ConsoleFind, "find 'name' will return the list of CVars containing 'name' as a substring." );
-    CVarUtils::CreateCVar( "exit", ConsoleExit, "Close the application" );
+	CVarUtils::CreateCVar( "cvarlist", ConsoleCVarList, "Show the list of convars/concommands");
+	CVarUtils::CreateCVar( "exit", ConsoleExit, "Close the application" );
     CVarUtils::CreateCVar( "quit", ConsoleExit, "Close the application" );
     CVarUtils::CreateCVar( "save", ConsoleSave, "Save the CVars to a file" );
     CVarUtils::CreateCVar( "load", ConsoleLoad, "Load CVars from a file" );
@@ -828,6 +832,7 @@ inline int FLConsoleInstance::handleCommandEntered( const char * sInput ) {
 	m_sCurrentCommandBeg = "";
 	m_sCurrentCommandEnd = "";
 	m_nCommandNum = 0; //reset history
+	return 0;
 }
 
 
@@ -957,47 +962,67 @@ inline int FLConsoleInstance::_FindRecursionLevel( std::string sCommand )
 
 
 
-/*
 ////////////////////////////////////////////////////////////////////////////////
-void FLConsoleInstance::PrintAllCVars()
+inline void FLConsoleInstance::PrintAllCVars()
 {
-    Trie& trie = CVarUtils::TrieInstance();
-    TrieNode* node = trie.FindSubStr(  RemoveSpaces( m_sCurrentCommandBeg ) );
-    if( !node ) {
-        return;
-    }
+	const char* sRowBeginTag = "";
+	const char* sRowEndTag = "";
+	const char* sCellBeginTag = "[cell]";
+	const char* sCellEndTag = "[/cell]";
 
-    std::cout << "CVars:" << std::endl;
 
-    // Retrieve suggestions (retrieve all leaves by traversing from current node)
-    std::vector<TrieNode*> suggest = trie.CollectAllNodes( node );
-    std::sort( suggest.begin(), suggest.end() );
-    //output suggestions
-    unsigned int nLongestName = 0;
-    unsigned int nLongestVal = 0;
-    for( unsigned int ii = 0; ii < suggest.size(); ii++ ){
-        std::string sName = ( (CVarUtils::CVar<int>*) suggest[ii]->m_pNodeData )->m_sVarName;
-        std::string sVal = CVarUtils::GetValueAsString( suggest[ii]->m_pNodeData );
-        if( sName.length() > nLongestName ){
-            nLongestName = sName.length();
-        }
-        if( sVal.length() > nLongestVal ){
-            nLongestVal = sVal.length();
-        }
-     }
+	Trie& trie = CVarUtils::TrieInstance();
+	TrieNode* node = trie.FindSubStr("");
+	if( !node )
+	{
+		return;
+	}
+	// Retrieve suggestions (retrieve all leaves by traversing from current node)
+	std::vector<TrieNode*> suggest = trie.CollectAllNodes( node );
+	std::sort( suggest.begin(), suggest.end() );
+	//output suggestions
+	unsigned int nLongestName = 0;
+	unsigned int nLongestVal = 0;
+	for( unsigned int ii = 0; ii < suggest.size(); ii++ )
+	{
+		std::string sName = ( (CVarUtils::CVar<int>*) suggest[ii]->m_pNodeData )->m_sVarName;
+		std::string sVal = CVarUtils::GetValueAsString( suggest[ii]->m_pNodeData );
+		if( sName.length() > nLongestName )
+		{
+			nLongestName = sName.length();
+		}
+		if( sVal.length() > nLongestVal )
+		{
+			nLongestVal = sVal.length();
+		}
+	}
 
-    if( suggest.size() > 1) {
-        for( unsigned int ii = 0; ii < suggest.size(); ii++ ){
-            std::string sName = ( (CVarUtils::CVar<int>*) suggest[ii]->m_pNodeData )->m_sVarName;
-            std::string sVal = CVarUtils::GetValueAsString( suggest[ii]->m_pNodeData );
-            std::string sHelp = CVarUtils::GetHelp( sName ); 
-            sName.resize( nLongestName, ' ' );
-            sVal.resize( nLongestVal, ' ' );
-            printf( "%-s: Default value = %-30s   %-50s\n", sName.c_str(), sVal.c_str(), sHelp.empty() ? "" : sHelp.c_str() );
-        }
-    }
+	if( suggest.size() > 1)
+	{
+
+		Printf("[table=3]");
+		for( unsigned int ii = 0; ii < suggest.size(); ii++ )
+		{
+			std::string sName = ( (CVarUtils::CVar<int>*) suggest[ii]->m_pNodeData )->m_sVarName;
+			std::string sVal = CVarUtils::GetValueAsString( suggest[ii]->m_pNodeData );
+			std::string sHelp = CVarUtils::GetHelp( sName );
+//                sName.resize( nLongestName, ' ' );
+//                sVal.resize( nLongestVal, ' ' );
+//                printf( "%-s: Default value = %-30s   %-50s\n", sName.c_str(), sVal.c_str(), sHelp.empty() ? "" : sHelp.c_str() );
+
+			Printf( "%s%s%-s%s%s  %-30s %s%s  %-50s%s%s\n",
+					sRowBeginTag,
+					sCellBeginTag, sName.c_str(), sCellEndTag,
+					sCellBeginTag, sVal.c_str(), sCellEndTag,
+					sCellBeginTag, sHelp.empty() ? "empty" : sHelp.c_str(), sCellEndTag,
+					sRowEndTag );
+		}
+
+		Printf("[/table]");
+	}
 }
-*/
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 inline std::string FLConsoleInstance::_TabComplete()
@@ -1361,5 +1386,7 @@ inline bool FLConsoleInstance::SettingsLoad( std::string sFileName )
 
     return true;
 }
+
+#pragma warning( pop )
 
 #endif

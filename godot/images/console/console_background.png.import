@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/console_background.png-158624a7634e2519bf55893814ce032e.stex"
+path="res://.import/console_background.png-169bd6f658288fb822a422f3890845cb.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/console_background.png"
-dest_files=[ "res://.import/console_background.png-158624a7634e2519bf55893814ce032e.stex" ]
+source_file="res://images/console/console_background.png"
+dest_files=[ "res://.import/console_background.png-169bd6f658288fb822a422f3890845cb.stex" ]
 
 [params]
 

@@ -78,21 +78,27 @@ void FLConsoleInstance::EnterLogLine(const char *line, const LineProperty prop, 
 	_CheckInit();
 
 	GDConsole *consoleLogLine = GDConsole::get_singleton();
-	if(consoleLogLine == nullptr) {
+	if(consoleLogLine == nullptr)
+	{
 		godot::Godot::print("Error, null singleton");
 	} else {
-		consoleLogLine->LogLine(line);
-		consoleLogLine->newline();
-
+		if(display)
+		{
+			consoleLogLine->LogLine(line);
+			consoleLogLine->newline();
+		}
 // script history
-		if( (int)m_sConsoleText.size() >= m_nConsoleMaxHistory ) {
+		if( (int)m_sConsoleText.size() >= m_nConsoleMaxHistory )
+		{
 			m_sConsoleText.pop_back();
 		}
 
-		if( line != NULL ) {
+		if( line != NULL )
+		{
 			m_sConsoleText.push_front( ConsoleLine(std::string(line), prop, display) );
 
-			if( m_bSavingScript && prop != LINEPROP_ERROR ) {
+			if( m_bSavingScript && prop != LINEPROP_ERROR )
+			{
 				m_ScriptText.push_front( ConsoleLine(std::string(line), prop, display) );
 			}
 		}
